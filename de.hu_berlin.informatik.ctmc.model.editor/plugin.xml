@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.ui.newWizards">
+      <!-- @generated ctmc -->
+      <category
+            id="org.eclipse.emf.ecore.Wizard.category.ID"
+            name="%_UI_Wizard_category"/>
+      <wizard
+            id="de.hu_berlin.informatik.ctmc.model.ctmc.presentation.CtmcModelWizardID"
+            name="%_UI_CtmcModelWizard_label"
+            class="de.hu_berlin.informatik.ctmc.model.ctmc.presentation.CtmcModelWizard"
+            category="org.eclipse.emf.ecore.Wizard.category.ID"
+            icon="icons/full/obj16/CtmcModelFile.gif">
+         <description>%_UI_CtmcModelWizard_description</description>
+         <selection class="org.eclipse.core.resources.IResource"/>
+      </wizard>
+   </extension>
+
+   <extension point="org.eclipse.ui.editors">
+      <!-- @generated ctmc -->
+      <editor
+            id="de.hu_berlin.informatik.ctmc.model.ctmc.presentation.CtmcEditorID"
+            name="%_UI_CtmcEditor_label"
+            icon="icons/full/obj16/CtmcModelFile.gif"
+            extensions="ctmc"
+            class="de.hu_berlin.informatik.ctmc.model.ctmc.presentation.CtmcEditor"
+            contributorClass="de.hu_berlin.informatik.ctmc.model.ctmc.presentation.CtmcActionBarContributor">
+      </editor>
+   </extension>
+
+</plugin>

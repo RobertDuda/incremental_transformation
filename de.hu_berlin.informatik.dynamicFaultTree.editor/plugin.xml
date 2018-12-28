@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.ui.newWizards">
+      <!-- @generated dynamicFaultTree -->
+      <category
+            id="org.eclipse.emf.ecore.Wizard.category.ID"
+            name="%_UI_Wizard_category"/>
+      <wizard
+            id="de.hu_berlin.informatik.dynamicFaultTree.presentation.DynamicFaultTreeModelWizardID"
+            name="%_UI_DynamicFaultTreeModelWizard_label"
+            class="de.hu_berlin.informatik.dynamicFaultTree.presentation.DynamicFaultTreeModelWizard"
+            category="org.eclipse.emf.ecore.Wizard.category.ID"
+            icon="icons/full/obj16/DynamicFaultTreeModelFile.gif">
+         <description>%_UI_DynamicFaultTreeModelWizard_description</description>
+         <selection class="org.eclipse.core.resources.IResource"/>
+      </wizard>
+   </extension>
+
+   <extension point="org.eclipse.ui.editors">
+      <!-- @generated dynamicFaultTree -->
+      <editor
+            id="de.hu_berlin.informatik.dynamicFaultTree.presentation.DynamicFaultTreeEditorID"
+            name="%_UI_DynamicFaultTreeEditor_label"
+            icon="icons/full/obj16/DynamicFaultTreeModelFile.gif"
+            extensions="dynamicfaulttree"
+            class="de.hu_berlin.informatik.dynamicFaultTree.presentation.DynamicFaultTreeEditor"
+            contributorClass="de.hu_berlin.informatik.dynamicFaultTree.presentation.DynamicFaultTreeActionBarContributor">
+      </editor>
+   </extension>
+
+</plugin>

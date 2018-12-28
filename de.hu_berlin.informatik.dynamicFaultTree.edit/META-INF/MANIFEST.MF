@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: de.hu_berlin.informatik.dynamicFaultTree.edit;singleton:=true
+Automatic-Module-Name: de.hu_berlin.informatik.dynamicFaultTree.edit
+Bundle-Version: 1.0.0.qualifier
+Bundle-ClassPath: .
+Bundle-Activator: de.hu_berlin.informatik.dynamicFaultTree.provider.DynamicFaultTreeEditPlugin$Implementation
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.hu_berlin.informatik.dynamicFaultTree.provider
+Require-Bundle: org.eclipse.core.runtime,
+ de.hu_berlin.informatik.dynamicFaultTree;visibility:=reexport,
+ org.eclipse.emf.edit;visibility:=reexport
+Bundle-ActivationPolicy: lazy

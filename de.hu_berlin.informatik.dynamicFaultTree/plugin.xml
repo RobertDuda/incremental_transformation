@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated dynamicFaultTree -->
+      <package
+            uri="http://www.example.org/dynamicFaultTree"
+            class="de.hu_berlin.informatik.dynamicFaultTree.DynamicFaultTreePackage"
+            genModel="model/dynamicFaultTree.genmodel"/>
+   </extension>
+
+</plugin>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="de.hu_berlin.informatik.transformation.commands.category"
+            name="Transformation Category">
+      </category>
+      <command
+            categoryId="de.hu_berlin.informatik.transformation.commands.category"
+            id="de.hu_berlin.informatik.transformation.commands.transformation"
+            name="Transformation">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="de.hu_berlin.informatik.transformation.handlers.TransformationHandler"
+            commandId="de.hu_berlin.informatik.transformation.commands.transformation">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="de.hu_berlin.informatik.transformation.commands.transformation"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+6">
+      </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               id="de.hu_berlin.informatik.transformation.menus.transformation"
+               label="DFT to CTMC"
+               mnemonic="M">
+            <command
+                  commandId="de.hu_berlin.informatik.transformation.commands.transformation"
+                  id="de.hu_berlin.informatik.transformation.menus.transformation"
+                  mnemonic="S">
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="de.hu_berlin.informatik.transformations.toolbar.contribution">
+            <command
+                  id="de.hu_berlin.informatik.transformation.commands.transformation"
+                  commandId="de.hu_berlin.informatik.transformation.toolbar.transformation"
+                  icon="icons/sample.png"
+                  tooltip="Transform a dynamic Fault Tree into a CTMC.">
+            </command>
+         </toolbar>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=additions">
+            <menu
+            id="de.hu_berlin.informatik.transformation.menus.transformation"
+            label="DFT to CTMC">
+            <command
+                  commandId="de.hu_berlin.informatik.transformation.commands.transformation"
+                  icon="icons/sample.png"
+                  id="de.hu_berlin.informatik.transformation.menus.transformation"
+                  mnemonic="M1+P"
+                  tooltip="Transform a dynamic Fault Tree into a CTMC.">
+            </command>
+            </menu>
+      </menuContribution>
+   </extension>
+
+</plugin>

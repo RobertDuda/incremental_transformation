@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description:Group xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:tool="http://www.eclipse.org/sirius/diagram/description/tool/1.1.0" xmlns:tool_1="http://www.eclipse.org/sirius/description/tool/1.1.0" name="dynamicFaultTree" version="12.0.0.2017041100">
+  <ownedViewpoints name="DynamicFaultTree" modelFileExtension="dynamicfaulttree uml ecore">
+    <ownedRepresentations xsi:type="description_1:DiagramDescription" name="DFT Description" domainClass="dynamicFaultTree::DFT" enablePopupBars="true">
+      <metamodel href="http://www.example.org/dynamicFaultTree#/"/>
+      <layout xsi:type="description_1:OrderedTreeLayout" childrenExpression="feature:eContents" nodeMapping="//@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='andNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='eventNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='fdepNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='orNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='pandNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='porNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='seqNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='spareNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='tleNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='xorNode']"/>
+      <defaultLayer name="Default">
+        <nodeMappings name="tleNode" semanticCandidatesExpression="feature:topLevelEvent" domainClass="dynamicFaultTree::TopLevelEvent">
+          <style xsi:type="style:WorkspaceImageDescription" showIcon="false" labelPosition="node" resizeKind="NSEW" workspacePath="/de.hu_berlin.informatik.dynamicFaultTree.design/description/TLE.jpg">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="andNode" semanticCandidatesExpression="feature:eAllContents" domainClass="dynamicFaultTree::AND">
+          <style xsi:type="style:WorkspaceImageDescription" labelSize="9" showIcon="false" labelPosition="node" resizeKind="NSEW" arcWidth="8" arcHeight="8" workspacePath="/de.hu_berlin.informatik.dynamicFaultTree.design/description/AND.jpg">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="pandNode" semanticCandidatesExpression="feature:eAllContents" domainClass="dynamicFaultTree::PAND">
+          <style xsi:type="style:WorkspaceImageDescription" showIcon="false" labelPosition="node" resizeKind="NSEW" workspacePath="/de.hu_berlin.informatik.dynamicFaultTree.design/description/PAND.jpg">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="orNode" semanticCandidatesExpression="feature:eAllContents" domainClass="dynamicFaultTree::OR">
+          <style xsi:type="style:WorkspaceImageDescription" showIcon="false" labelPosition="node" resizeKind="NSEW" workspacePath="/de.hu_berlin.informatik.dynamicFaultTree.design/description/OR.jpg">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="eventNode" semanticCandidatesExpression="feature:eAllContents" domainClass="dynamicFaultTree::Event">
+          <style xsi:type="style:DotDescription" showIcon="false" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='white']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="porNode" semanticCandidatesExpression="feature:eAllContents" domainClass="dynamicFaultTree::POR">
+          <style xsi:type="style:WorkspaceImageDescription" showIcon="false" labelPosition="node" resizeKind="NSEW" workspacePath="/de.hu_berlin.informatik.dynamicFaultTree.design/description/POR.jpg">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="spareNode" semanticCandidatesExpression="feature:eAllContents" domainClass="dynamicFaultTree::Spare">
+          <style xsi:type="style:WorkspaceImageDescription" showIcon="false" sizeComputationExpression="" labelPosition="node" resizeKind="NSEW" workspacePath="/de.hu_berlin.informatik.dynamicFaultTree.design/description/SPARE.jpg">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="xorNode" semanticCandidatesExpression="feature:eAllContents" domainClass="dynamicFaultTree::XOR">
+          <style xsi:type="style:WorkspaceImageDescription" showIcon="false" labelAlignment="LEFT" resizeKind="NSEW" workspacePath="/de.hu_berlin.informatik.dynamicFaultTree.design/description/XOR.jpg">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="fdepNode" semanticCandidatesExpression="feature:eAllContents" domainClass="dynamicFaultTree::FunctionalDependency">
+          <style xsi:type="style:WorkspaceImageDescription" showIcon="false" labelPosition="node" resizeKind="NSEW" workspacePath="/de.hu_berlin.informatik.dynamicFaultTree.design/description/FDEP.jpg">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="seqNode" domainClass="dynamicFaultTree::Sequence">
+          <style xsi:type="style:WorkspaceImageDescription" showIcon="false" labelPosition="node" resizeKind="NSEW" workspacePath="/de.hu_berlin.informatik.dynamicFaultTree.design/description/seq.jpg">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+          </style>
+        </nodeMappings>
+        <edgeMappings name="tleToGate" sourceMapping="//@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='tleNode']" targetMapping="//@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='andNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='orNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='pandNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='porNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='spareNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='xorNode']" targetFinderExpression="feature:gate">
+          <style sourceArrow="InputArrow" targetArrow="NoDecoration" endsCentering="Both">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <centerLabelStyleDescription>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
+        <edgeMappings name="gateToGate" sourceMapping="//@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='andNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='pandNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='orNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='porNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='spareNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='xorNode']" targetMapping="//@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='andNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='pandNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='orNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='porNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='spareNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='xorNode']" targetFinderExpression="feature:childGate">
+          <style sourceArrow="InputArrow" targetArrow="NoDecoration" endsCentering="Both">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <centerLabelStyleDescription>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
+        <edgeMappings name="eventToGate" sourceMapping="//@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='eventNode']" targetMapping="//@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='andNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='orNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='pandNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='porNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='spareNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='xorNode']" targetFinderExpression="feature:parentGate">
+          <style endsCentering="Both">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <centerLabelStyleDescription>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
+        <edgeMappings name="depToEvent" sourceMapping="//@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='eventNode']" targetMapping="//@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='fdepNode'] //@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='seqNode']" targetFinderExpression="feature:dependency">
+          <style lineStyle="dash" endsCentering="Both">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <centerLabelStyleDescription>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
+        <toolSections name="Create Nodes">
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="createTLE" nodeMappings="//@ownedViewpoints[name='DynamicFaultTree']/@ownedRepresentations[name='DFT%20Description']/@defaultLayer/@nodeMappings[name='tleNode']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:container">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="dynamicFaultTree::TopLevelEvent" referenceName="tle"/>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+        </toolSections>
+      </defaultLayer>
+    </ownedRepresentations>
+    <ownedJavaExtensions qualifiedClassName="de.hu_berlin.informatik.dynamicFaultTree.design.Services"/>
+  </ownedViewpoints>
+</description:Group>

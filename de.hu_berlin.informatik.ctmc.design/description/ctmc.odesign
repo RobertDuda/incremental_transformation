@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description:Group xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:tool="http://www.eclipse.org/sirius/diagram/description/tool/1.1.0" xmlns:tool_1="http://www.eclipse.org/sirius/description/tool/1.1.0" name="ctmc" version="12.0.0.2017041100">
+  <ownedViewpoints name="CTMC" modelFileExtension="ctmc uml ecore">
+    <ownedRepresentations xsi:type="description_1:DiagramDescription" name="CTMC Description" domainClass="ctmc::CTMC" enablePopupBars="true">
+      <metamodel href="http://www.example.org/ctmc#/"/>
+      <layout xsi:type="description_1:CompositeLayout" padding="50" direction="LeftToRight"/>
+      <defaultLayer name="Default">
+        <nodeMappings name="StateNode" semanticCandidatesExpression="feature:states" domainClass="ctmc::State">
+          <style xsi:type="style:DotDescription" showIcon="false" labelExpression="aql:self.name" sizeComputationExpression="5" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_yellow']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="LabelNode" semanticCandidatesExpression="[thisEObject.states.labels/]" domainClass="ctmc::Label">
+          <style xsi:type="style:EllipseNodeDescription" borderSizeComputationExpression="2" borderLineStyle="dot" showIcon="false" labelExpression="aql:self.text" sizeComputationExpression="4" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelFormat>italic</labelFormat>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='white']"/>
+          </style>
+        </nodeMappings>
+        <edgeMappings name="TransitionEdge" sourceMapping="//@ownedViewpoints[name='CTMC']/@ownedRepresentations[name='CTMC%20Description']/@defaultLayer/@nodeMappings[name='StateNode']" targetMapping="//@ownedViewpoints[name='CTMC']/@ownedRepresentations[name='CTMC%20Description']/@defaultLayer/@nodeMappings[name='StateNode']" targetFinderExpression="feature:to" sourceFinderExpression="feature:from" domainClass="ctmc::Transition" useDomainElement="true">
+          <style sizeComputationExpression="0">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+            <centerLabelStyleDescription showIcon="false" labelExpression="aql:self.name + '\n' + self.probability">
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
+        <edgeMappings name="LabelEdge" sourceMapping="//@ownedViewpoints[name='CTMC']/@ownedRepresentations[name='CTMC%20Description']/@defaultLayer/@nodeMappings[name='StateNode']" targetMapping="//@ownedViewpoints[name='CTMC']/@ownedRepresentations[name='CTMC%20Description']/@defaultLayer/@nodeMappings[name='LabelNode']" targetFinderExpression="feature:labels">
+          <style lineStyle="dot" targetArrow="NoDecoration" sizeComputationExpression="2">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <centerLabelStyleDescription>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
+        <toolSections>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="createState" nodeMappings="//@ownedViewpoints[name='CTMC']/@ownedRepresentations[name='CTMC%20Description']/@defaultLayer/@nodeMappings[name='StateNode']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:container">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="ctmc::State" referenceName="states">
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="name" valueExpression="aql:'state'"/>
+                </subModelOperations>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="createEdge" edgeMappings="//@ownedViewpoints[name='CTMC']/@ownedRepresentations[name='CTMC%20Description']/@defaultLayer/@edgeMappings[name='TransitionEdge']">
+            <sourceVariable name="source"/>
+            <targetVariable name="target"/>
+            <sourceViewVariable name="sourceView"/>
+            <targetViewVariable name="targetView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:CreateInstance" typeName="ctmc::Transition" referenceName="createTransition">
+                <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:source">
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="out" valueExpression="var:instance"/>
+                </subModelOperations>
+                <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:target">
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="in" valueExpression="var:instance"/>
+                </subModelOperations>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+        </toolSections>
+      </defaultLayer>
+    </ownedRepresentations>
+    <ownedJavaExtensions qualifiedClassName="de.hu_berlin.informatik.ctmc.design.Services"/>
+  </ownedViewpoints>
+</description:Group>

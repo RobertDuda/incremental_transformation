@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+  <extension point="org.eclipse.sirius.componentization">
+    <component class="de.hu_berlin.informatik.dynamicFaultTree.design.Activator"
+               id="de.hu_berlin.informatik.dynamicFaultTree.design"
+	       name="dynamicFaultTree">
+    </component>
+  </extension>
+</plugin>

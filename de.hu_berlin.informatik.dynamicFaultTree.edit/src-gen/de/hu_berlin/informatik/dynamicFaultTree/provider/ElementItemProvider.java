@@ -55,8 +55,8 @@ public class ElementItemProvider extends ItemProviderAdapter implements IEditing
 
 			addNamePropertyDescriptor(object);
 			addProbabilityPropertyDescriptor(object);
-			addFailedPropertyDescriptor(object);
 			addSequencePositionPropertyDescriptor(object);
+			addElementIDPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -93,22 +93,6 @@ public class ElementItemProvider extends ItemProviderAdapter implements IEditing
 	}
 
 	/**
-	 * This adds a property descriptor for the Failed feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addFailedPropertyDescriptor(Object object) {
-		itemPropertyDescriptors
-				.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(),
-						getResourceLocator(), getString("_UI_Element_failed_feature"),
-						getString("_UI_PropertyDescriptor_description", "_UI_Element_failed_feature",
-								"_UI_Element_type"),
-						DynamicFaultTreePackage.Literals.ELEMENT__FAILED, true, false, false,
-						ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE, null, null));
-	}
-
-	/**
 	 * This adds a property descriptor for the Sequence Position feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -121,6 +105,22 @@ public class ElementItemProvider extends ItemProviderAdapter implements IEditing
 						getString("_UI_PropertyDescriptor_description", "_UI_Element_sequencePosition_feature",
 								"_UI_Element_type"),
 						DynamicFaultTreePackage.Literals.ELEMENT__SEQUENCE_POSITION, true, false, false,
+						ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE, null, null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Element ID feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addElementIDPropertyDescriptor(Object object) {
+		itemPropertyDescriptors
+				.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(),
+						getResourceLocator(), getString("_UI_Element_elementID_feature"),
+						getString("_UI_PropertyDescriptor_description", "_UI_Element_elementID_feature",
+								"_UI_Element_type"),
+						DynamicFaultTreePackage.Literals.ELEMENT__ELEMENT_ID, true, false, false,
 						ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE, null, null));
 	}
 
@@ -172,8 +172,8 @@ public class ElementItemProvider extends ItemProviderAdapter implements IEditing
 		switch (notification.getFeatureID(Element.class)) {
 		case DynamicFaultTreePackage.ELEMENT__NAME:
 		case DynamicFaultTreePackage.ELEMENT__PROBABILITY:
-		case DynamicFaultTreePackage.ELEMENT__FAILED:
 		case DynamicFaultTreePackage.ELEMENT__SEQUENCE_POSITION:
+		case DynamicFaultTreePackage.ELEMENT__ELEMENT_ID:
 			fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 			return;
 		}

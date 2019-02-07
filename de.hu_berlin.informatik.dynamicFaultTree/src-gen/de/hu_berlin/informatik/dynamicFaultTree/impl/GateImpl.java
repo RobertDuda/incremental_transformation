@@ -84,6 +84,7 @@ public abstract class GateImpl extends ElementImpl implements Gate {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public TopLevelEvent getToplevelevent() {
 		if (eContainerFeatureID() != DynamicFaultTreePackage.GATE__TOPLEVELEVENT)
 			return null;
@@ -106,6 +107,7 @@ public abstract class GateImpl extends ElementImpl implements Gate {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setToplevelevent(TopLevelEvent newToplevelevent) {
 		if (newToplevelevent != eInternalContainer()
 				|| (eContainerFeatureID() != DynamicFaultTreePackage.GATE__TOPLEVELEVENT && newToplevelevent != null)) {
@@ -130,6 +132,7 @@ public abstract class GateImpl extends ElementImpl implements Gate {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<Gate> getChildGate() {
 		if (childGate == null) {
 			childGate = new EObjectContainmentWithInverseEList<Gate>(Gate.class, this,
@@ -143,6 +146,7 @@ public abstract class GateImpl extends ElementImpl implements Gate {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Gate getParentGate() {
 		if (eContainerFeatureID() != DynamicFaultTreePackage.GATE__PARENT_GATE)
 			return null;
@@ -164,6 +168,7 @@ public abstract class GateImpl extends ElementImpl implements Gate {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setParentGate(Gate newParentGate) {
 		if (newParentGate != eInternalContainer()
 				|| (eContainerFeatureID() != DynamicFaultTreePackage.GATE__PARENT_GATE && newParentGate != null)) {
@@ -188,6 +193,7 @@ public abstract class GateImpl extends ElementImpl implements Gate {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<Event> getChildEvent() {
 		if (childEvent == null) {
 			childEvent = new EObjectContainmentWithInverseEList<Event>(Event.class, this,

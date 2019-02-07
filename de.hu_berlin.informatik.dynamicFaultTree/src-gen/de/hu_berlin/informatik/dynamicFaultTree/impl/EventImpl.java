@@ -65,6 +65,7 @@ public class EventImpl extends ElementImpl implements Event {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Gate getParentGate() {
 		if (eContainerFeatureID() != DynamicFaultTreePackage.EVENT__PARENT_GATE)
 			return null;
@@ -86,6 +87,7 @@ public class EventImpl extends ElementImpl implements Event {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setParentGate(Gate newParentGate) {
 		if (newParentGate != eInternalContainer()
 				|| (eContainerFeatureID() != DynamicFaultTreePackage.EVENT__PARENT_GATE && newParentGate != null)) {
@@ -110,6 +112,7 @@ public class EventImpl extends ElementImpl implements Event {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Dependency getDependency() {
 		if (dependency != null && dependency.eIsProxy()) {
 			InternalEObject oldDependency = (InternalEObject) dependency;
@@ -156,6 +159,7 @@ public class EventImpl extends ElementImpl implements Event {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setDependency(Dependency newDependency) {
 		if (newDependency != dependency) {
 			NotificationChain msgs = null;

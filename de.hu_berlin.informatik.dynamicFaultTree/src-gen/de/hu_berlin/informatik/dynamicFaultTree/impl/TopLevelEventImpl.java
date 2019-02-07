@@ -62,6 +62,7 @@ public class TopLevelEventImpl extends ElementImpl implements TopLevelEvent {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Gate getGate() {
 		return gate;
 	}
@@ -90,6 +91,7 @@ public class TopLevelEventImpl extends ElementImpl implements TopLevelEvent {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setGate(Gate newGate) {
 		if (newGate != gate) {
 			NotificationChain msgs = null;

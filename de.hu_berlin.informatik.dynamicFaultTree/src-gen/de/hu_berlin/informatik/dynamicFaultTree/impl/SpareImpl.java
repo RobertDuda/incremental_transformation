@@ -62,6 +62,7 @@ public class SpareImpl extends GateImpl implements Spare {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<Event> getSpares() {
 		if (spares == null) {
 			spares = new EObjectResolvingEList<Event>(Event.class, this, DynamicFaultTreePackage.SPARE__SPARES);

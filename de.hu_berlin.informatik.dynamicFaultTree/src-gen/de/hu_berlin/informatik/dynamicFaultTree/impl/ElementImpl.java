@@ -22,8 +22,8 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <ul>
  *   <li>{@link de.hu_berlin.informatik.dynamicFaultTree.impl.ElementImpl#getName <em>Name</em>}</li>
  *   <li>{@link de.hu_berlin.informatik.dynamicFaultTree.impl.ElementImpl#getProbability <em>Probability</em>}</li>
- *   <li>{@link de.hu_berlin.informatik.dynamicFaultTree.impl.ElementImpl#isFailed <em>Failed</em>}</li>
  *   <li>{@link de.hu_berlin.informatik.dynamicFaultTree.impl.ElementImpl#getSequencePosition <em>Sequence Position</em>}</li>
+ *   <li>{@link de.hu_berlin.informatik.dynamicFaultTree.impl.ElementImpl#getElementID <em>Element ID</em>}</li>
  * </ul>
  *
  * @generated
@@ -70,26 +70,6 @@ public abstract class ElementImpl extends MinimalEObjectImpl.Container implement
 	protected float probability = PROBABILITY_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #isFailed() <em>Failed</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isFailed()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean FAILED_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isFailed() <em>Failed</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isFailed()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean failed = FAILED_EDEFAULT;
-
-	/**
 	 * The default value of the '{@link #getSequencePosition() <em>Sequence Position</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -108,6 +88,26 @@ public abstract class ElementImpl extends MinimalEObjectImpl.Container implement
 	 * @ordered
 	 */
 	protected int sequencePosition = SEQUENCE_POSITION_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getElementID() <em>Element ID</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getElementID()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final int ELEMENT_ID_EDEFAULT = 0;
+
+	/**
+	 * The cached value of the '{@link #getElementID() <em>Element ID</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getElementID()
+	 * @generated
+	 * @ordered
+	 */
+	protected int elementID = ELEMENT_ID_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -133,6 +133,7 @@ public abstract class ElementImpl extends MinimalEObjectImpl.Container implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -142,6 +143,7 @@ public abstract class ElementImpl extends MinimalEObjectImpl.Container implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setName(String newName) {
 		String oldName = name;
 		name = newName;
@@ -155,6 +157,7 @@ public abstract class ElementImpl extends MinimalEObjectImpl.Container implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public float getProbability() {
 		return probability;
 	}
@@ -164,6 +167,7 @@ public abstract class ElementImpl extends MinimalEObjectImpl.Container implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setProbability(float newProbability) {
 		float oldProbability = probability;
 		probability = newProbability;
@@ -177,28 +181,7 @@ public abstract class ElementImpl extends MinimalEObjectImpl.Container implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean isFailed() {
-		return failed;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setFailed(boolean newFailed) {
-		boolean oldFailed = failed;
-		failed = newFailed;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, DynamicFaultTreePackage.ELEMENT__FAILED, oldFailed,
-					failed));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+	@Override
 	public int getSequencePosition() {
 		return sequencePosition;
 	}
@@ -208,6 +191,7 @@ public abstract class ElementImpl extends MinimalEObjectImpl.Container implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setSequencePosition(int newSequencePosition) {
 		int oldSequencePosition = sequencePosition;
 		sequencePosition = newSequencePosition;
@@ -222,16 +206,40 @@ public abstract class ElementImpl extends MinimalEObjectImpl.Container implement
 	 * @generated
 	 */
 	@Override
+	public int getElementID() {
+		return elementID;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setElementID(int newElementID) {
+		int oldElementID = elementID;
+		elementID = newElementID;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, DynamicFaultTreePackage.ELEMENT__ELEMENT_ID,
+					oldElementID, elementID));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 		case DynamicFaultTreePackage.ELEMENT__NAME:
 			return getName();
 		case DynamicFaultTreePackage.ELEMENT__PROBABILITY:
 			return getProbability();
-		case DynamicFaultTreePackage.ELEMENT__FAILED:
-			return isFailed();
 		case DynamicFaultTreePackage.ELEMENT__SEQUENCE_POSITION:
 			return getSequencePosition();
+		case DynamicFaultTreePackage.ELEMENT__ELEMENT_ID:
+			return getElementID();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -250,11 +258,11 @@ public abstract class ElementImpl extends MinimalEObjectImpl.Container implement
 		case DynamicFaultTreePackage.ELEMENT__PROBABILITY:
 			setProbability((Float) newValue);
 			return;
-		case DynamicFaultTreePackage.ELEMENT__FAILED:
-			setFailed((Boolean) newValue);
-			return;
 		case DynamicFaultTreePackage.ELEMENT__SEQUENCE_POSITION:
 			setSequencePosition((Integer) newValue);
+			return;
+		case DynamicFaultTreePackage.ELEMENT__ELEMENT_ID:
+			setElementID((Integer) newValue);
 			return;
 		}
 		super.eSet(featureID, newValue);
@@ -274,11 +282,11 @@ public abstract class ElementImpl extends MinimalEObjectImpl.Container implement
 		case DynamicFaultTreePackage.ELEMENT__PROBABILITY:
 			setProbability(PROBABILITY_EDEFAULT);
 			return;
-		case DynamicFaultTreePackage.ELEMENT__FAILED:
-			setFailed(FAILED_EDEFAULT);
-			return;
 		case DynamicFaultTreePackage.ELEMENT__SEQUENCE_POSITION:
 			setSequencePosition(SEQUENCE_POSITION_EDEFAULT);
+			return;
+		case DynamicFaultTreePackage.ELEMENT__ELEMENT_ID:
+			setElementID(ELEMENT_ID_EDEFAULT);
 			return;
 		}
 		super.eUnset(featureID);
@@ -296,10 +304,10 @@ public abstract class ElementImpl extends MinimalEObjectImpl.Container implement
 			return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 		case DynamicFaultTreePackage.ELEMENT__PROBABILITY:
 			return probability != PROBABILITY_EDEFAULT;
-		case DynamicFaultTreePackage.ELEMENT__FAILED:
-			return failed != FAILED_EDEFAULT;
 		case DynamicFaultTreePackage.ELEMENT__SEQUENCE_POSITION:
 			return sequencePosition != SEQUENCE_POSITION_EDEFAULT;
+		case DynamicFaultTreePackage.ELEMENT__ELEMENT_ID:
+			return elementID != ELEMENT_ID_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -319,10 +327,10 @@ public abstract class ElementImpl extends MinimalEObjectImpl.Container implement
 		result.append(name);
 		result.append(", probability: ");
 		result.append(probability);
-		result.append(", failed: ");
-		result.append(failed);
 		result.append(", sequencePosition: ");
 		result.append(sequencePosition);
+		result.append(", elementID: ");
+		result.append(elementID);
 		result.append(')');
 		return result.toString();
 	}

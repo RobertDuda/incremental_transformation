@@ -141,22 +141,22 @@ public interface DynamicFaultTreePackage extends EPackage {
 	int ELEMENT__PROBABILITY = 1;
 
 	/**
-	 * The feature id for the '<em><b>Failed</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ELEMENT__FAILED = 2;
-
-	/**
 	 * The feature id for the '<em><b>Sequence Position</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ELEMENT__SEQUENCE_POSITION = 3;
+	int ELEMENT__SEQUENCE_POSITION = 2;
+
+	/**
+	 * The feature id for the '<em><b>Element ID</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELEMENT__ELEMENT_ID = 3;
 
 	/**
 	 * The number of structural features of the '<em>Element</em>' class.
@@ -205,15 +205,6 @@ public interface DynamicFaultTreePackage extends EPackage {
 	int TOP_LEVEL_EVENT__PROBABILITY = ELEMENT__PROBABILITY;
 
 	/**
-	 * The feature id for the '<em><b>Failed</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOP_LEVEL_EVENT__FAILED = ELEMENT__FAILED;
-
-	/**
 	 * The feature id for the '<em><b>Sequence Position</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -221,6 +212,15 @@ public interface DynamicFaultTreePackage extends EPackage {
 	 * @ordered
 	 */
 	int TOP_LEVEL_EVENT__SEQUENCE_POSITION = ELEMENT__SEQUENCE_POSITION;
+
+	/**
+	 * The feature id for the '<em><b>Element ID</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOP_LEVEL_EVENT__ELEMENT_ID = ELEMENT__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Gate</b></em>' containment reference.
@@ -278,15 +278,6 @@ public interface DynamicFaultTreePackage extends EPackage {
 	int GATE__PROBABILITY = ELEMENT__PROBABILITY;
 
 	/**
-	 * The feature id for the '<em><b>Failed</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int GATE__FAILED = ELEMENT__FAILED;
-
-	/**
 	 * The feature id for the '<em><b>Sequence Position</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -294,6 +285,15 @@ public interface DynamicFaultTreePackage extends EPackage {
 	 * @ordered
 	 */
 	int GATE__SEQUENCE_POSITION = ELEMENT__SEQUENCE_POSITION;
+
+	/**
+	 * The feature id for the '<em><b>Element ID</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GATE__ELEMENT_ID = ELEMENT__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Toplevelevent</b></em>' container reference.
@@ -378,15 +378,6 @@ public interface DynamicFaultTreePackage extends EPackage {
 	int EVENT__PROBABILITY = ELEMENT__PROBABILITY;
 
 	/**
-	 * The feature id for the '<em><b>Failed</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EVENT__FAILED = ELEMENT__FAILED;
-
-	/**
 	 * The feature id for the '<em><b>Sequence Position</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -394,6 +385,15 @@ public interface DynamicFaultTreePackage extends EPackage {
 	 * @ordered
 	 */
 	int EVENT__SEQUENCE_POSITION = ELEMENT__SEQUENCE_POSITION;
+
+	/**
+	 * The feature id for the '<em><b>Element ID</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EVENT__ELEMENT_ID = ELEMENT__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Parent Gate</b></em>' container reference.
@@ -460,15 +460,6 @@ public interface DynamicFaultTreePackage extends EPackage {
 	int DEPENDENCY__PROBABILITY = ELEMENT__PROBABILITY;
 
 	/**
-	 * The feature id for the '<em><b>Failed</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DEPENDENCY__FAILED = ELEMENT__FAILED;
-
-	/**
 	 * The feature id for the '<em><b>Sequence Position</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -476,6 +467,15 @@ public interface DynamicFaultTreePackage extends EPackage {
 	 * @ordered
 	 */
 	int DEPENDENCY__SEQUENCE_POSITION = ELEMENT__SEQUENCE_POSITION;
+
+	/**
+	 * The feature id for the '<em><b>Element ID</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DEPENDENCY__ELEMENT_ID = ELEMENT__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Events</b></em>' reference list.
@@ -533,15 +533,6 @@ public interface DynamicFaultTreePackage extends EPackage {
 	int SEQUENCE__PROBABILITY = DEPENDENCY__PROBABILITY;
 
 	/**
-	 * The feature id for the '<em><b>Failed</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SEQUENCE__FAILED = DEPENDENCY__FAILED;
-
-	/**
 	 * The feature id for the '<em><b>Sequence Position</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -549,6 +540,15 @@ public interface DynamicFaultTreePackage extends EPackage {
 	 * @ordered
 	 */
 	int SEQUENCE__SEQUENCE_POSITION = DEPENDENCY__SEQUENCE_POSITION;
+
+	/**
+	 * The feature id for the '<em><b>Element ID</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SEQUENCE__ELEMENT_ID = DEPENDENCY__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Events</b></em>' reference list.
@@ -606,15 +606,6 @@ public interface DynamicFaultTreePackage extends EPackage {
 	int FUNCTIONAL_DEPENDENCY__PROBABILITY = DEPENDENCY__PROBABILITY;
 
 	/**
-	 * The feature id for the '<em><b>Failed</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int FUNCTIONAL_DEPENDENCY__FAILED = DEPENDENCY__FAILED;
-
-	/**
 	 * The feature id for the '<em><b>Sequence Position</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -622,6 +613,15 @@ public interface DynamicFaultTreePackage extends EPackage {
 	 * @ordered
 	 */
 	int FUNCTIONAL_DEPENDENCY__SEQUENCE_POSITION = DEPENDENCY__SEQUENCE_POSITION;
+
+	/**
+	 * The feature id for the '<em><b>Element ID</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FUNCTIONAL_DEPENDENCY__ELEMENT_ID = DEPENDENCY__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Events</b></em>' reference list.
@@ -679,15 +679,6 @@ public interface DynamicFaultTreePackage extends EPackage {
 	int AND__PROBABILITY = GATE__PROBABILITY;
 
 	/**
-	 * The feature id for the '<em><b>Failed</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int AND__FAILED = GATE__FAILED;
-
-	/**
 	 * The feature id for the '<em><b>Sequence Position</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -695,6 +686,15 @@ public interface DynamicFaultTreePackage extends EPackage {
 	 * @ordered
 	 */
 	int AND__SEQUENCE_POSITION = GATE__SEQUENCE_POSITION;
+
+	/**
+	 * The feature id for the '<em><b>Element ID</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int AND__ELEMENT_ID = GATE__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Toplevelevent</b></em>' container reference.
@@ -779,15 +779,6 @@ public interface DynamicFaultTreePackage extends EPackage {
 	int PAND__PROBABILITY = GATE__PROBABILITY;
 
 	/**
-	 * The feature id for the '<em><b>Failed</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PAND__FAILED = GATE__FAILED;
-
-	/**
 	 * The feature id for the '<em><b>Sequence Position</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -795,6 +786,15 @@ public interface DynamicFaultTreePackage extends EPackage {
 	 * @ordered
 	 */
 	int PAND__SEQUENCE_POSITION = GATE__SEQUENCE_POSITION;
+
+	/**
+	 * The feature id for the '<em><b>Element ID</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PAND__ELEMENT_ID = GATE__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Toplevelevent</b></em>' container reference.
@@ -879,15 +879,6 @@ public interface DynamicFaultTreePackage extends EPackage {
 	int OR__PROBABILITY = GATE__PROBABILITY;
 
 	/**
-	 * The feature id for the '<em><b>Failed</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int OR__FAILED = GATE__FAILED;
-
-	/**
 	 * The feature id for the '<em><b>Sequence Position</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -895,6 +886,15 @@ public interface DynamicFaultTreePackage extends EPackage {
 	 * @ordered
 	 */
 	int OR__SEQUENCE_POSITION = GATE__SEQUENCE_POSITION;
+
+	/**
+	 * The feature id for the '<em><b>Element ID</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OR__ELEMENT_ID = GATE__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Toplevelevent</b></em>' container reference.
@@ -979,15 +979,6 @@ public interface DynamicFaultTreePackage extends EPackage {
 	int POR__PROBABILITY = GATE__PROBABILITY;
 
 	/**
-	 * The feature id for the '<em><b>Failed</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int POR__FAILED = GATE__FAILED;
-
-	/**
 	 * The feature id for the '<em><b>Sequence Position</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -995,6 +986,15 @@ public interface DynamicFaultTreePackage extends EPackage {
 	 * @ordered
 	 */
 	int POR__SEQUENCE_POSITION = GATE__SEQUENCE_POSITION;
+
+	/**
+	 * The feature id for the '<em><b>Element ID</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int POR__ELEMENT_ID = GATE__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Toplevelevent</b></em>' container reference.
@@ -1079,15 +1079,6 @@ public interface DynamicFaultTreePackage extends EPackage {
 	int XOR__PROBABILITY = GATE__PROBABILITY;
 
 	/**
-	 * The feature id for the '<em><b>Failed</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int XOR__FAILED = GATE__FAILED;
-
-	/**
 	 * The feature id for the '<em><b>Sequence Position</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1095,6 +1086,15 @@ public interface DynamicFaultTreePackage extends EPackage {
 	 * @ordered
 	 */
 	int XOR__SEQUENCE_POSITION = GATE__SEQUENCE_POSITION;
+
+	/**
+	 * The feature id for the '<em><b>Element ID</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int XOR__ELEMENT_ID = GATE__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Toplevelevent</b></em>' container reference.
@@ -1179,15 +1179,6 @@ public interface DynamicFaultTreePackage extends EPackage {
 	int SPARE__PROBABILITY = GATE__PROBABILITY;
 
 	/**
-	 * The feature id for the '<em><b>Failed</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SPARE__FAILED = GATE__FAILED;
-
-	/**
 	 * The feature id for the '<em><b>Sequence Position</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1195,6 +1186,15 @@ public interface DynamicFaultTreePackage extends EPackage {
 	 * @ordered
 	 */
 	int SPARE__SEQUENCE_POSITION = GATE__SEQUENCE_POSITION;
+
+	/**
+	 * The feature id for the '<em><b>Element ID</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPARE__ELEMENT_ID = GATE__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Toplevelevent</b></em>' container reference.
@@ -1335,17 +1335,6 @@ public interface DynamicFaultTreePackage extends EPackage {
 	EAttribute getElement_Probability();
 
 	/**
-	 * Returns the meta object for the attribute '{@link de.hu_berlin.informatik.dynamicFaultTree.Element#isFailed <em>Failed</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Failed</em>'.
-	 * @see de.hu_berlin.informatik.dynamicFaultTree.Element#isFailed()
-	 * @see #getElement()
-	 * @generated
-	 */
-	EAttribute getElement_Failed();
-
-	/**
 	 * Returns the meta object for the attribute '{@link de.hu_berlin.informatik.dynamicFaultTree.Element#getSequencePosition <em>Sequence Position</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1355,6 +1344,17 @@ public interface DynamicFaultTreePackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getElement_SequencePosition();
+
+	/**
+	 * Returns the meta object for the attribute '{@link de.hu_berlin.informatik.dynamicFaultTree.Element#getElementID <em>Element ID</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Element ID</em>'.
+	 * @see de.hu_berlin.informatik.dynamicFaultTree.Element#getElementID()
+	 * @see #getElement()
+	 * @generated
+	 */
+	EAttribute getElement_ElementID();
 
 	/**
 	 * Returns the meta object for class '{@link de.hu_berlin.informatik.dynamicFaultTree.TopLevelEvent <em>Top Level Event</em>}'.
@@ -1659,20 +1659,20 @@ public interface DynamicFaultTreePackage extends EPackage {
 		EAttribute ELEMENT__PROBABILITY = eINSTANCE.getElement_Probability();
 
 		/**
-		 * The meta object literal for the '<em><b>Failed</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ELEMENT__FAILED = eINSTANCE.getElement_Failed();
-
-		/**
 		 * The meta object literal for the '<em><b>Sequence Position</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
 		EAttribute ELEMENT__SEQUENCE_POSITION = eINSTANCE.getElement_SequencePosition();
+
+		/**
+		 * The meta object literal for the '<em><b>Element ID</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELEMENT__ELEMENT_ID = eINSTANCE.getElement_ElementID();
 
 		/**
 		 * The meta object literal for the '{@link de.hu_berlin.informatik.dynamicFaultTree.impl.TopLevelEventImpl <em>Top Level Event</em>}' class.

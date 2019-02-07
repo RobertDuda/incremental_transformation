@@ -15,8 +15,8 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link de.hu_berlin.informatik.dynamicFaultTree.Element#getName <em>Name</em>}</li>
  *   <li>{@link de.hu_berlin.informatik.dynamicFaultTree.Element#getProbability <em>Probability</em>}</li>
- *   <li>{@link de.hu_berlin.informatik.dynamicFaultTree.Element#isFailed <em>Failed</em>}</li>
  *   <li>{@link de.hu_berlin.informatik.dynamicFaultTree.Element#getSequencePosition <em>Sequence Position</em>}</li>
+ *   <li>{@link de.hu_berlin.informatik.dynamicFaultTree.Element#getElementID <em>Element ID</em>}</li>
  * </ul>
  *
  * @see de.hu_berlin.informatik.dynamicFaultTree.DynamicFaultTreePackage#getElement()
@@ -77,32 +77,6 @@ public interface Element extends EObject {
 	void setProbability(float value);
 
 	/**
-	 * Returns the value of the '<em><b>Failed</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Failed</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Failed</em>' attribute.
-	 * @see #setFailed(boolean)
-	 * @see de.hu_berlin.informatik.dynamicFaultTree.DynamicFaultTreePackage#getElement_Failed()
-	 * @model
-	 * @generated
-	 */
-	boolean isFailed();
-
-	/**
-	 * Sets the value of the '{@link de.hu_berlin.informatik.dynamicFaultTree.Element#isFailed <em>Failed</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Failed</em>' attribute.
-	 * @see #isFailed()
-	 * @generated
-	 */
-	void setFailed(boolean value);
-
-	/**
 	 * Returns the value of the '<em><b>Sequence Position</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -127,5 +101,31 @@ public interface Element extends EObject {
 	 * @generated
 	 */
 	void setSequencePosition(int value);
+
+	/**
+	 * Returns the value of the '<em><b>Element ID</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Element ID</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Element ID</em>' attribute.
+	 * @see #setElementID(int)
+	 * @see de.hu_berlin.informatik.dynamicFaultTree.DynamicFaultTreePackage#getElement_ElementID()
+	 * @model
+	 * @generated
+	 */
+	int getElementID();
+
+	/**
+	 * Sets the value of the '{@link de.hu_berlin.informatik.dynamicFaultTree.Element#getElementID <em>Element ID</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Element ID</em>' attribute.
+	 * @see #getElementID()
+	 * @generated
+	 */
+	void setElementID(int value);
 
 } // Element

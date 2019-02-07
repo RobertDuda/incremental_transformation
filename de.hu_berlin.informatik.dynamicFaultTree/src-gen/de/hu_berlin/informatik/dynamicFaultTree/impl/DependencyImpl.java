@@ -63,6 +63,7 @@ public abstract class DependencyImpl extends ElementImpl implements Dependency {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<Event> getEvents() {
 		if (events == null) {
 			events = new EObjectWithInverseResolvingEList<Event>(Event.class, this,

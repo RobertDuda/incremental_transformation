@@ -19,8 +19,8 @@
     <genClasses ecoreClass="dynamicFaultTree.ecore#//Element">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute dynamicFaultTree.ecore#//Element/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute dynamicFaultTree.ecore#//Element/probability"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute dynamicFaultTree.ecore#//Element/failed"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute dynamicFaultTree.ecore#//Element/sequencePosition"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute dynamicFaultTree.ecore#//Element/elementID"/>
     </genClasses>
     <genClasses ecoreClass="dynamicFaultTree.ecore#//TopLevelEvent">
       <genFeatures children="true" createChild="true" propertySortChoices="true" ecoreFeature="ecore:EReference dynamicFaultTree.ecore#//TopLevelEvent/gate"/>

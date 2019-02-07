@@ -194,6 +194,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getDFT() {
 		return dftEClass;
 	}
@@ -203,6 +204,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getDFT_Name() {
 		return (EAttribute) dftEClass.getEStructuralFeatures().get(0);
 	}
@@ -212,6 +214,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getDFT_TopLevelEvent() {
 		return (EReference) dftEClass.getEStructuralFeatures().get(1);
 	}
@@ -221,6 +224,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getDFT_Dependencies() {
 		return (EReference) dftEClass.getEStructuralFeatures().get(2);
 	}
@@ -230,6 +234,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getElement() {
 		return elementEClass;
 	}
@@ -239,6 +244,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getElement_Name() {
 		return (EAttribute) elementEClass.getEStructuralFeatures().get(0);
 	}
@@ -248,6 +254,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getElement_Probability() {
 		return (EAttribute) elementEClass.getEStructuralFeatures().get(1);
 	}
@@ -257,7 +264,8 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getElement_Failed() {
+	@Override
+	public EAttribute getElement_SequencePosition() {
 		return (EAttribute) elementEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -266,7 +274,8 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getElement_SequencePosition() {
+	@Override
+	public EAttribute getElement_ElementID() {
 		return (EAttribute) elementEClass.getEStructuralFeatures().get(3);
 	}
 
@@ -275,6 +284,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getTopLevelEvent() {
 		return topLevelEventEClass;
 	}
@@ -284,6 +294,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getTopLevelEvent_Gate() {
 		return (EReference) topLevelEventEClass.getEStructuralFeatures().get(0);
 	}
@@ -293,6 +304,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getGate() {
 		return gateEClass;
 	}
@@ -302,6 +314,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getGate_Toplevelevent() {
 		return (EReference) gateEClass.getEStructuralFeatures().get(0);
 	}
@@ -311,6 +324,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getGate_ChildGate() {
 		return (EReference) gateEClass.getEStructuralFeatures().get(1);
 	}
@@ -320,6 +334,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getGate_ParentGate() {
 		return (EReference) gateEClass.getEStructuralFeatures().get(2);
 	}
@@ -329,6 +344,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getGate_ChildEvent() {
 		return (EReference) gateEClass.getEStructuralFeatures().get(3);
 	}
@@ -338,6 +354,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getEvent() {
 		return eventEClass;
 	}
@@ -347,6 +364,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getEvent_ParentGate() {
 		return (EReference) eventEClass.getEStructuralFeatures().get(0);
 	}
@@ -356,6 +374,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getEvent_Dependency() {
 		return (EReference) eventEClass.getEStructuralFeatures().get(1);
 	}
@@ -365,6 +384,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getDependency() {
 		return dependencyEClass;
 	}
@@ -374,6 +394,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getDependency_Events() {
 		return (EReference) dependencyEClass.getEStructuralFeatures().get(0);
 	}
@@ -383,6 +404,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getSequence() {
 		return sequenceEClass;
 	}
@@ -392,6 +414,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getFunctionalDependency() {
 		return functionalDependencyEClass;
 	}
@@ -401,6 +424,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getAND() {
 		return andEClass;
 	}
@@ -410,6 +434,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getPAND() {
 		return pandEClass;
 	}
@@ -419,6 +444,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getOR() {
 		return orEClass;
 	}
@@ -428,6 +454,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getPOR() {
 		return porEClass;
 	}
@@ -437,6 +464,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getXOR() {
 		return xorEClass;
 	}
@@ -446,6 +474,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getSpare() {
 		return spareEClass;
 	}
@@ -455,6 +484,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getSpare_Spares() {
 		return (EReference) spareEClass.getEStructuralFeatures().get(0);
 	}
@@ -464,6 +494,7 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public DynamicFaultTreeFactory getDynamicFaultTreeFactory() {
 		return (DynamicFaultTreeFactory) getEFactoryInstance();
 	}
@@ -496,8 +527,8 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 		elementEClass = createEClass(ELEMENT);
 		createEAttribute(elementEClass, ELEMENT__NAME);
 		createEAttribute(elementEClass, ELEMENT__PROBABILITY);
-		createEAttribute(elementEClass, ELEMENT__FAILED);
 		createEAttribute(elementEClass, ELEMENT__SEQUENCE_POSITION);
+		createEAttribute(elementEClass, ELEMENT__ELEMENT_ID);
 
 		topLevelEventEClass = createEClass(TOP_LEVEL_EVENT);
 		createEReference(topLevelEventEClass, TOP_LEVEL_EVENT__GATE);
@@ -593,11 +624,11 @@ public class DynamicFaultTreePackageImpl extends EPackageImpl implements Dynamic
 				!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getElement_Probability(), ecorePackage.getEFloat(), "probability", null, 0, 1, Element.class,
 				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getElement_Failed(), ecorePackage.getEBoolean(), "failed", null, 0, 1, Element.class,
-				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getElement_SequencePosition(), ecorePackage.getEInt(), "sequencePosition", null, 0, 1,
 				Element.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
 				!IS_DERIVED, IS_ORDERED);
+		initEAttribute(getElement_ElementID(), ecorePackage.getEInt(), "elementID", null, 0, 1, Element.class,
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(topLevelEventEClass, TopLevelEvent.class, "TopLevelEvent", !IS_ABSTRACT, !IS_INTERFACE,
 				IS_GENERATED_INSTANCE_CLASS);

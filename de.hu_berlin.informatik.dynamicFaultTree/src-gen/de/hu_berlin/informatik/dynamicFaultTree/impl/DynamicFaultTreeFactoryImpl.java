@@ -88,6 +88,7 @@ public class DynamicFaultTreeFactoryImpl extends EFactoryImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public DFT createDFT() {
 		DFTImpl dft = new DFTImpl();
 		return dft;
@@ -98,6 +99,7 @@ public class DynamicFaultTreeFactoryImpl extends EFactoryImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public TopLevelEvent createTopLevelEvent() {
 		TopLevelEventImpl topLevelEvent = new TopLevelEventImpl();
 		return topLevelEvent;
@@ -108,6 +110,7 @@ public class DynamicFaultTreeFactoryImpl extends EFactoryImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Event createEvent() {
 		EventImpl event = new EventImpl();
 		return event;
@@ -118,6 +121,7 @@ public class DynamicFaultTreeFactoryImpl extends EFactoryImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Sequence createSequence() {
 		SequenceImpl sequence = new SequenceImpl();
 		return sequence;
@@ -128,6 +132,7 @@ public class DynamicFaultTreeFactoryImpl extends EFactoryImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public FunctionalDependency createFunctionalDependency() {
 		FunctionalDependencyImpl functionalDependency = new FunctionalDependencyImpl();
 		return functionalDependency;
@@ -138,6 +143,7 @@ public class DynamicFaultTreeFactoryImpl extends EFactoryImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public AND createAND() {
 		ANDImpl and = new ANDImpl();
 		return and;
@@ -148,6 +154,7 @@ public class DynamicFaultTreeFactoryImpl extends EFactoryImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public PAND createPAND() {
 		PANDImpl pand = new PANDImpl();
 		return pand;
@@ -158,6 +165,7 @@ public class DynamicFaultTreeFactoryImpl extends EFactoryImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public OR createOR() {
 		ORImpl or = new ORImpl();
 		return or;
@@ -168,6 +176,7 @@ public class DynamicFaultTreeFactoryImpl extends EFactoryImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public POR createPOR() {
 		PORImpl por = new PORImpl();
 		return por;
@@ -178,6 +187,7 @@ public class DynamicFaultTreeFactoryImpl extends EFactoryImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public XOR createXOR() {
 		XORImpl xor = new XORImpl();
 		return xor;
@@ -188,6 +198,7 @@ public class DynamicFaultTreeFactoryImpl extends EFactoryImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Spare createSpare() {
 		SpareImpl spare = new SpareImpl();
 		return spare;
@@ -198,6 +209,7 @@ public class DynamicFaultTreeFactoryImpl extends EFactoryImpl implements Dynamic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public DynamicFaultTreePackage getDynamicFaultTreePackage() {
 		return (DynamicFaultTreePackage) getEPackage();
 	}

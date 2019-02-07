@@ -98,6 +98,7 @@ public class DFTImpl extends MinimalEObjectImpl.Container implements DFT {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -107,6 +108,7 @@ public class DFTImpl extends MinimalEObjectImpl.Container implements DFT {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setName(String newName) {
 		String oldName = name;
 		name = newName;
@@ -119,6 +121,7 @@ public class DFTImpl extends MinimalEObjectImpl.Container implements DFT {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public TopLevelEvent getTopLevelEvent() {
 		return topLevelEvent;
 	}
@@ -147,6 +150,7 @@ public class DFTImpl extends MinimalEObjectImpl.Container implements DFT {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setTopLevelEvent(TopLevelEvent newTopLevelEvent) {
 		if (newTopLevelEvent != topLevelEvent) {
 			NotificationChain msgs = null;
@@ -169,6 +173,7 @@ public class DFTImpl extends MinimalEObjectImpl.Container implements DFT {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<Dependency> getDependencies() {
 		if (dependencies == null) {
 			dependencies = new EObjectContainmentEList<Dependency>(Dependency.class, this,

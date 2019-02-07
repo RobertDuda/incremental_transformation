@@ -52,7 +52,7 @@ public class TransformationHandler extends AbstractHandler {
 		trans.preparation(dft);
 		trans.transformation();
 		String dataFolder = fileDft.getParentFile().getAbsolutePath();
-		trans.saveTransformationData(dataFolder, dft.getName()+" Transformation Data");
+		trans.saveTransformationData(dataFolder, dft.getName()+" Transformation Data", dft);
 		
 		//building the ctmc
 		JOptionPane.showMessageDialog(null, "Please select the destination folder for the CTMC...", "DFT to CTMC", JOptionPane.PLAIN_MESSAGE);

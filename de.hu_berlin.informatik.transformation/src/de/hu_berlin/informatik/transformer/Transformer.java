@@ -1,11 +1,14 @@
 package de.hu_berlin.informatik.transformer;
 
 
+import java.awt.List;
 import java.beans.FeatureDescriptor;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -13,8 +16,10 @@ import java.io.Writer;
 import java.lang.annotation.Repeatable;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
@@ -24,6 +29,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.eclipse.swt.widgets.Link;
 
 import de.hu_berlin.informatik.ctmc.model.ctmc.CTMC;
 import de.hu_berlin.informatik.ctmc.model.ctmc.CtmcFactory;
@@ -42,7 +48,7 @@ import de.hu_berlin.informatik.dynamicFaultTree.*;
  */
 public class Transformer {
 	
-	//ctmc information
+	//dft information
 	private String dftName;
 	
 	//saves the tree elements for manipulation
@@ -56,14 +62,39 @@ public class Transformer {
 	private Queue<Gate> gateQueue;
 	private Queue<Event> eventQueue;
 	private Queue<Dependency> dependencyQueue;
+	
 	//saving data for the transformation
 	private LinkedList<int[]> stateList;
 	private LinkedList<int[]> transitionList;
 	private LinkedList<boolean[]> failSafeList;
 	private LinkedList<boolean[]> seqFailList;
 	private LinkedList<int[]> fDepTransition;
+	
 	//for merging states
 	LinkedList<Integer> endStates;
+	
+	//data for the incremental transformation
+	//old dft data
+	private String oldDftName;
+		
+	//saves the tree elements for manipulation
+	private LinkedList<Gate> oldGateList;
+	private LinkedList<Event> oldEventList;
+	private LinkedList<Dependency> oldDependencyList;
+	private LinkedList<Sequence> oldSeqList;
+	private LinkedList<FunctionalDependency> oldFDepList;
+		
+	//queues for the transformation
+	private Queue<Gate> oldGateQueue;
+	private Queue<Event> oldEventQueue;
+	private Queue<Dependency> oldDependencyQueue;
+	
+	//old state list
+	private LinkedList<int[]> oldStateList;
+	
+	private LinkedList<Difference> differenceList;
+	
+	private LinkedList<Transition> oldTransitionList;
 	
 	
 	public Transformer() {
@@ -85,6 +116,21 @@ public class Transformer {
 		fDepTransition = new LinkedList<int[]>();
 		
 		endStates = new LinkedList<Integer>();
+		
+		//TODO not always needed, move to method
+		oldGateList = new LinkedList<>();
+		oldEventList = new LinkedList<>();
+		oldDependencyList = new LinkedList<>();
+		oldSeqList = new LinkedList<>();
+		oldFDepList = new LinkedList<>();
+		
+		oldGateQueue = new LinkedList<>();
+		oldEventQueue = new LinkedList<>();
+		oldDependencyQueue = new LinkedList<>();
+		
+		oldStateList = new LinkedList<int[]>();
+		
+		differenceList = new LinkedList<Difference>();
 		
 	}
 	
@@ -128,8 +174,79 @@ public class Transformer {
 	public LinkedList<int[]> getTransitionList() {
 		return transitionList;
 	}
-	//getters end
 	
+	//getters for the old dft
+	//getters
+	public LinkedList<Gate> getOldGateList() {
+		return oldGateList;
+	}
+
+	public LinkedList<Event> getOldEventList() {
+		return oldEventList;
+	}
+
+	public LinkedList<Dependency> getOldDependencyList() {
+		return oldDependencyList;
+	}
+		
+	public LinkedList<Sequence> getOldSeqList() {
+		return oldSeqList;
+	}
+		
+	public LinkedList<FunctionalDependency> getOldFunctionalDependencyList(){
+		return oldFDepList;
+	}
+		
+	public Queue<Gate> getOldGateQueue() {
+		return oldGateQueue;
+	}
+
+	public Queue<Event> getOldEventQueue() {
+		return oldEventQueue;
+	}
+
+	public Queue<Dependency> getOldDependencyQueue() {
+		return oldDependencyQueue;
+	}
+	
+	public LinkedList<int[]> getOldStateList() {
+		return oldStateList;
+	}
+
+	public void setOldStateList(LinkedList<int[]> oldStateList) {
+		this.oldStateList = oldStateList;
+	}
+
+	/**
+	 * @return the differenceList
+	 */
+	public LinkedList<Difference> getDifferenceList() {
+		return differenceList;
+	}
+
+	/**
+	 * @param differenceList the differenceList to set
+	 */
+	public void setDifferenceList(LinkedList<Difference> differenceList) {
+		this.differenceList = differenceList;
+	}
+	
+	//getters and setters end
+
+	/**
+	 * @return the oldTransitionList
+	 */
+	public LinkedList<Transition> getOldTransitionList() {
+		return oldTransitionList;
+	}
+
+	/**
+	 * @param oldTransitionList the oldTransitionList to set
+	 */
+	public void setOldTransitionList(LinkedList<Transition> oldTransitionList) {
+		this.oldTransitionList = oldTransitionList;
+	}
+
 	/**
 	 * @param dft
 	 * Takes a dft, usually provided by the ModelManager class and fills lists with its information for the next step.
@@ -200,6 +317,81 @@ public class Transformer {
 			}else {
 				FunctionalDependency tmpFDep = (FunctionalDependency) dependencyList.get(d);
 				fDepList.add(tmpFDep);
+			}
+		}
+		
+	}//end prep
+	
+	/**
+	 * @param dft
+	 * Takes a dft, usually provided by the ModelManager class and fills lists with its information for the next step.
+	 * 
+	 */
+	public void preparationOldDft(DFT oldDft) {
+		
+		oldDftName = oldDft.getName();
+		
+		oldGateQueue.add(oldDft.getTopLevelEvent().getGate());
+		
+		//filling the lists
+		while(!oldGateQueue.isEmpty()) {
+			
+			Gate tmp = oldGateQueue.peek();
+			
+			if(!tmp.getChildGate().isEmpty()) {
+				for(int i = 0; i < tmp.getChildGate().size(); i++) {
+					//fill in the queue for the state expansion
+					oldGateQueue.add(tmp.getChildGate().get(i));
+				}
+			}
+			
+			if (!tmp.getChildEvent().isEmpty()) {
+				for(int j = 0; j < tmp.getChildEvent().size(); j++) {
+					oldEventQueue.add(tmp.getChildEvent().get(j));
+					//eventList.add(tmp.getChildEvent().get(j));
+				}
+			}
+			
+			
+			oldGateList.add(oldGateQueue.poll());
+		}
+		
+		while(!oldEventQueue.isEmpty()) {
+			
+			Event tmpE = oldEventQueue.peek();
+			
+			if(tmpE.getDependency() != null && !oldDependencyList.contains(tmpE.getDependency())) {
+				oldDependencyList.add(tmpE.getDependency());
+			}
+			
+			//eventList.add(eventQueue.poll());
+			
+			/*
+			 * test duplicate events
+			 */
+			//compare the values of two events, if they are identical, they are the same
+			boolean identical = false;
+			for(int i = 0; i < oldEventList.size(); i++) {
+				if (oldEventList.get(i).getName().equals(tmpE.getName())) {
+					System.out.println("same names: " + oldEventList.get(i).getName() + ", " + tmpE.getName());
+					identical = true;
+				}
+			}
+			//add event to list, skip duplicates
+			if (identical == false) {
+				oldEventList.add(oldEventQueue.poll());
+			}else {
+				oldEventQueue.poll();
+			}
+		}
+		
+		for(int d = 0; d < oldDependencyList.size(); d++) {
+			if(oldDependencyList.get(d).eClass().getName() == "Sequence") {
+				Sequence tmpSeq = (Sequence) oldDependencyList.get(d);
+				oldSeqList.add(tmpSeq);
+			}else {
+				FunctionalDependency tmpFDep = (FunctionalDependency) oldDependencyList.get(d);
+				oldFDepList.add(tmpFDep);
 			}
 		}
 		
@@ -1250,7 +1442,7 @@ public class Transformer {
 		
 	}
 	
-	public void saveTransformationData(String folderPath, String folderName) {
+	public void saveTransformationData(String folderPath, String folderName, DFT dft) {
 		
 		//make  a new folder for the data
 		File tmpFolder = new File(folderPath);
@@ -1260,9 +1452,10 @@ public class Transformer {
             folder.mkdir();
         }
 		
-		//save the events by name(to do: make IDs)
+		
+		//save the events by name
 		//1. create the file if none exists
-		System.out.println(folder.getAbsolutePath());
+		/*System.out.println(folder.getAbsolutePath());
 		File events = new File(folder.getAbsolutePath(), "Events.txt");
 		if (!events.getParentFile().mkdirs()) {
 			events.getParentFile().mkdirs();
@@ -1311,7 +1504,7 @@ public class Transformer {
 			e.printStackTrace();
 		} finally {
 			gateWriter.close();
-		}
+		}*/
 		
 		//save states
 		//1. create the file 
@@ -1330,7 +1523,7 @@ public class Transformer {
 		try {
 			stateWriter = new PrintWriter(states.getAbsolutePath());
 			for(int i = 0; i < stateList.size(); i++) {
-				stateWriter.println(Arrays.toString(stateList.get(i)));
+				stateWriter.println(i + ". " +  Arrays.toString(stateList.get(i)));
 			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -1341,7 +1534,7 @@ public class Transformer {
 		
 		//save transitions
 		//1. create file
-		File transitions = new File(folder.getAbsoluteFile(), "Transitions.txt");
+		/*File transitions = new File(folder.getAbsoluteFile(), "Transitions.txt");
 		if (!transitions.getParentFile().mkdirs()) {
 			transitions.getParentFile().mkdirs();
 		}
@@ -1363,11 +1556,1230 @@ public class Transformer {
 			e.printStackTrace();
 		} finally {
 			transitionWriter.close();
+		}*/
+		
+		//save the model for the incremental transformation
+		//prepare the dft copy
+		DynamicFaultTreePackage.eINSTANCE.eClass();
+		DynamicFaultTreeFactory factory = DynamicFaultTreeFactory.eINSTANCE;
+		DFT saveDft = factory.createDFT();
+		
+		saveDft = dft;
+		String saveDftUri = folderPath + folderName + "/" + saveDft.getName() + "Old" + ".dynamicfaulttree";
+		System.out.println(saveDftUri);
+		
+		//prepare a resourceset and a recource for the dft to save it
+		Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
+		reg.getExtensionToFactoryMap().put("dynamicfaulttree", new XMIResourceFactoryImpl());
+		ResourceSet rs = new ResourceSetImpl();
+		Resource r = rs.createResource(URI.createURI(saveDftUri));
+				
+		//add the dft as content to the resource
+		r.getContents().add(saveDft);
+			
+		//try to save it
+		try {
+			r.save(null);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		
-		//failsafe?
-		//check later
+	}
+	//TODO remove sysout, cases...
+	public void compareDfts(DFT dft, DFT oldDFT) {
 		
+		//comparing the names
+		if (dftName.compareTo(oldDftName) != 0) {
+			System.out.println("DFT names are different: " + dftName + " vs " + oldDftName);
+			//different dfts...
+			Difference diff = new Difference();
+			diff.setPriority(1);
+			diff.setRefNew(null);
+			diff.setRefOld(null);
+			diff.setType("update labels");
+			diff.setDifference(15); //dfts
+			//sort into list
+			int i;
+			for(i = 0; i < differenceList.size(); i++) {
+				if (differenceList.get(i).getPriority() > diff.getPriority()) {
+					differenceList.add(i, diff);
+					break;
+				}
+			}
+			if (i == differenceList.size()) {
+				differenceList.addLast(diff);
+			}
+			System.out.println("Created: " + diff);
+		}
+		else {
+			System.out.println("DFT names are the same: " + dftName);
+		}
+		
+		//compare TLEs
+		//names
+		if (dft.getTopLevelEvent().getName().compareTo(oldDFT.getTopLevelEvent().getName()) != 0) {
+			System.out.println("TLE names are different: " + dft.getTopLevelEvent().getName() + " vs " + oldDFT.getTopLevelEvent().getName());
+			//TLE names
+			Difference diff = new Difference();
+			diff.setPriority(2);
+			diff.setRefNew(dft.getTopLevelEvent());
+			diff.setRefOld(oldDFT.getTopLevelEvent());
+			diff.setType("TLE names");
+			diff.setDifference(1); //name
+			//sort into list
+			int i;
+			for(i = 0; i < differenceList.size(); i++) {
+				if (differenceList.get(i).getPriority() > diff.getPriority()) {
+					differenceList.add(i, diff);
+					break;
+				}
+			}
+			if (i == differenceList.size()) {
+				differenceList.addLast(diff);
+			}
+			System.out.println("Created: " + diff);
+		}else {
+			System.out.println("TLE names are the same: " + dft.getTopLevelEvent().getName() );
+		}
+		//IDs
+		if (dft.getTopLevelEvent().getElementID() != oldDFT.getTopLevelEvent().getElementID()) {
+			System.out.println("TLE IDs are different: " + dft.getTopLevelEvent().getElementID() + " vs " + oldDFT.getTopLevelEvent().getElementID());
+			//TODO different tle...
+		}else {
+			System.out.println("TLE IDs are the same: " + oldDFT.getTopLevelEvent().getElementID());
+		}
+		
+		//compare gates
+		boolean checkedGates[] = new boolean[oldGateList.size()]; //mark if gates were found or not
+		boolean foundGates[] = new boolean[gateList.size()]; //mark if it's a new or old gate
+		
+		for(int i = 0; i < gateList.size(); i++) {
+			for(int j = 0; j < oldGateList.size(); j++) {
+				if (gateList.get(i).getElementID() == oldGateList.get(j).getElementID()) {
+					checkedGates[j] = true;
+					foundGates[i] = true;
+					System.out.println("Comparing gates " + gateList.get(i).getName() + " and " +oldGateList.get(i).getName() + "...");
+					compareGates(gateList.get(i), oldGateList.get(j));
+				}
+			}
+			if (foundGates[i] == false) {
+				System.out.println("New gate: " + gateList.get(i).getName() + ", " + gateList.get(i).getElementID());
+				//new gate
+				Difference diff = new Difference();
+				diff.setPriority(3);
+				diff.setRefNew(gateList.get(i));
+				diff.setRefOld(null);
+				diff.setType("add gate");
+				diff.setDifference(16); //new gate
+				//sort into list
+				int k;
+				for(k = 0; k < differenceList.size(); k++) {
+					if (differenceList.get(k).getPriority() > diff.getPriority()) {
+						differenceList.add(k, diff);
+						break;
+					}
+				}
+				if (k == differenceList.size()) {
+					differenceList.addLast(diff);
+				}
+				System.out.println("Created: " + diff);
+			}
+		}
+		for (int i = 0; i < oldGateList.size(); i++) {
+			if (checkedGates[i] == false) {
+				System.out.println("Removed gate: " + oldGateList.get(i).getElementID() + ", " + oldGateList.get(i).getName());
+				//remove gate
+				Difference diff = new Difference();
+				diff.setPriority(3);
+				diff.setRefNew(null);
+				diff.setRefOld(oldGateList.get(i));
+				diff.setType("remove gate");
+				diff.setDifference(17); //new gate
+				//sort into list
+				int k;
+				for(k = 0; k < differenceList.size(); k++) {
+					if (differenceList.get(k).getPriority() > diff.getPriority()) {
+						differenceList.add(k, diff);
+						break;
+					}
+				}
+				if (k == differenceList.size()) {
+					differenceList.addLast(diff);
+				}
+				System.out.println("Created: " + diff);
+			}
+		}
+		
+		//compare events
+		boolean checkedEvents[] = new boolean[oldEventList.size()]; //mark if events were found or not
+		boolean foundEvents[] = new boolean[eventList.size()]; //mark if it's a new or old event
+		
+		for(int i = 0; i < eventList.size(); i++) {
+			for(int j = 0; j < oldEventList.size(); j++) {
+				if (eventList.get(i).getElementID() == oldEventList.get(j).getElementID()) {
+					checkedEvents[j] = true;
+					foundEvents[i] = true;
+					System.out.println("Comparing events " + eventList.get(i).getName() + " and " + oldEventList.get(i).getName() + "...");
+					compareEvents(eventList.get(i), oldEventList.get(j));
+				}
+			}
+			if (foundEvents[i] == false) {
+				System.out.println("New event: " + eventList.get(i).getName() + ", " + eventList.get(i).getElementID());
+				//add event
+				Difference diff = new Difference();
+				diff.setPriority(3);
+				diff.setRefNew(eventList.get(i));
+				diff.setRefOld(null);
+				diff.setType("add event");
+				diff.setDifference(18); //new gate
+				//sort into list
+				int k;
+				for(k = 0; k < differenceList.size(); k++) {
+					if (differenceList.get(k).getPriority() > diff.getPriority()) {
+						differenceList.add(k, diff);
+						break;
+					}
+				}
+				if (k == differenceList.size()) {
+					differenceList.addLast(diff);
+				}
+				System.out.println("Created: " + diff);
+			}
+		}
+		for (int i = 0; i < oldEventList.size(); i++) {
+			if (checkedEvents[i] == false) {
+				System.out.println("Removed event: " + oldEventList.get(i).getElementID() + ", " + oldEventList.get(i).getName());
+				//remove event
+				Difference diff = new Difference();
+				diff.setPriority(3);
+				diff.setRefNew(null);
+				diff.setRefOld(oldEventList.get(i));
+				diff.setType("remove event");
+				diff.setDifference(19); //new event
+				//sort into list
+				int k;
+				for(k = 0; k < differenceList.size(); k++) {
+					if (differenceList.get(k).getPriority() > diff.getPriority()) {
+						differenceList.add(k, diff);
+						break;
+					}
+				}
+				if (k == differenceList.size()) {
+					differenceList.addLast(diff);
+				}
+				System.out.println("Created: " + diff);
+			}
+		}
+		
+		//compare dependiencies
+		boolean checkedDependencies[] = new boolean[oldDependencyList.size()]; //mark if events were found or not
+		boolean foundDependencies[] = new boolean[dependencyList.size()]; //mark if it's a new or old event
+		
+		for(int i = 0; i < dependencyList.size(); i++) {
+			for(int j = 0; j < oldDependencyList.size(); j++) {
+				if (dependencyList.get(i).getElementID() == oldDependencyList.get(j).getElementID()) {
+					checkedDependencies[j] = true;
+					foundDependencies[i] = true;
+					System.out.println("Comparing dependencies " + dependencyList.get(i).getName() + " and " + oldDependencyList.get(i).getName() + "...");
+					compareDependencies(dependencyList.get(i), oldDependencyList.get(j));
+				}
+			}
+			if (foundDependencies[i] == false) {
+				System.out.println("New dependency: " + dependencyList.get(i).getName() + ", " + dependencyList.get(i).getElementID());
+				//add dep
+				Difference diff = new Difference();
+				diff.setPriority(2);
+				diff.setRefNew(dependencyList.get(i));
+				diff.setRefOld(null);
+				diff.setType("add dependency");
+				diff.setDifference(22); //add dep
+				//sort into list
+				int k;
+				for(k = 0; k < differenceList.size(); k++) {
+					if (differenceList.get(k).getPriority() > diff.getPriority()) {
+						differenceList.add(k, diff);
+						break;
+					}
+				}
+				if (k == differenceList.size()) {
+					differenceList.addLast(diff);
+				}
+				System.out.println("Created: " + diff);
+			}
+		}
+		for (int i = 0; i < oldDependencyList.size(); i++) {
+			if (checkedDependencies[i] == false) {
+				System.out.println("Removed dependency: " + oldDependencyList.get(i).getElementID() + ", " + oldDependencyList.get(i).getName());
+				//remove dep
+				Difference diff = new Difference();
+				diff.setPriority(2);
+				diff.setRefNew(null);
+				diff.setRefOld(oldDependencyList.get(i));
+				diff.setType("remove dependency");
+				diff.setDifference(23); //rem dep
+				//sort into list
+				int k;
+				for(k = 0; k < differenceList.size(); k++) {
+					if (differenceList.get(k).getPriority() > diff.getPriority()) {
+						differenceList.add(k, diff);
+						break;
+					}
+				}
+				if (k == differenceList.size()) {
+					differenceList.addLast(diff);
+				}
+				System.out.println("Created: " + diff);
+			}
+		}
+		
+	}
+	//TODO remove sysout, cases...
+	public void compareGates(Gate gate1, Gate gate2) {
+		
+		//comapre IDs
+		if (gate1.getElementID() != gate2.getElementID()) {
+			System.out.println("Gate IDs are different: " + gate1.getElementID() + " vs " + gate2.getElementID());
+			//TODO remove
+		}else {
+			System.out.println("Gate IDs are the same: " + gate1.getElementID());
+		}
+		//names
+		if (gate1.getName().compareTo(gate2.getName()) != 0) {
+			System.out.println("Gate names are different: " + gate1.getName() + " vs " + gate2.getName());
+			//update labels
+			Difference diff = new Difference();
+			diff.setPriority(1);
+			diff.setRefNew(gate1);
+			diff.setRefOld(gate2);
+			diff.setType("update labels");
+			diff.setDifference(1); //name
+			//sort into list
+			int i;
+			for(i = 0; i < differenceList.size(); i++) {
+				if (differenceList.get(i).getPriority() > diff.getPriority()) {
+					differenceList.add(i, diff);
+					break;
+				}
+			}
+			if (i == differenceList.size()) {
+				differenceList.addLast(diff);
+			}
+			System.out.println("Created: " + diff);
+		}else {
+			System.out.println("Gate names are the same: " + gate1.getName());
+		}
+		//gate type
+		if (gate1.getClass().getName().compareTo(gate2.getClass().getName()) != 0) {
+			System.out.println("Gate types are different: " + gate1.eClass().getName() +" vs " + gate2.eClass().getName());
+			//update gate logic
+			Difference diff = new Difference();
+			diff.setPriority(2);
+			diff.setRefNew(gate1);
+			diff.setRefOld(gate2);
+			diff.setType("update gate logic");
+			diff.setDifference(12); //gate type
+			//sort into list
+			int i;
+			for(i = 0; i < differenceList.size(); i++) {
+				if (differenceList.get(i).getPriority() > diff.getPriority()) {
+					differenceList.add(i, diff);
+					break;
+				}
+			}
+			if (i == differenceList.size()) {
+				differenceList.addLast(diff);
+			}
+			System.out.println("Created: " + diff);
+		}else {
+			System.out.println("Gate types are the same: " + gate2.eClass().getName());
+		}
+		//sequence position
+		if (gate1.getSequencePosition() != gate2.getSequencePosition()) {
+			System.out.println("Gate sequence positions are different: " + gate1.getSequencePosition() + " vs " + gate2.getSequencePosition());
+			//update gate logic
+			Difference diff = new Difference();
+			diff.setPriority(2);
+			diff.setRefNew(gate1);
+			diff.setRefOld(gate2);
+			diff.setType("update gate logic");
+			diff.setDifference(3); //name
+			//sort into list
+			int i;
+			for(i = 0; i < differenceList.size(); i++) {
+				if (differenceList.get(i).getPriority() > diff.getPriority()) {
+					differenceList.add(i, diff);
+					break;
+				}
+			}
+			if (i == differenceList.size()) {
+				differenceList.addLast(diff);
+			}
+			System.out.println("Created: " + diff);
+		}else {
+			System.out.println("Gate sequence positions are the same: " + gate1.getSequencePosition());
+		}		
+		//parent gate/TLE
+		if (gate1.getToplevelevent() != null) { //parent is TLE
+			if (gate1.getToplevelevent().getElementID() != gate2.getToplevelevent().getElementID()) {
+				System.out.println("Parents are different: (" + gate1.getToplevelevent().getName() + ", " + gate1.getToplevelevent().getElementID() + ") vs (" +gate2.getToplevelevent().getName() + ", " + gate2.getToplevelevent().getName() + ")");
+				//TODO this case makes no sense
+			}else {
+				System.out.println("Parents are the same: (" + gate1.getToplevelevent().getName() + ", " + gate1.getToplevelevent().getElementID() + ") and (" + gate2.getToplevelevent().getName() + ", " + gate2.getToplevelevent().getElementID() + ")");
+			}
+		}else {  //parent is gate
+			if (gate1.getParentGate().getElementID() != gate2.getParentGate().getElementID()) {
+				System.out.println("Parents are different: " + gate1.getParentGate().getName() + ", " + gate1.getParentGate().getElementID() + " vs " + gate2.getParentGate().getName() + ", " + gate2.getParentGate().getElementID());
+				//update gate logic
+				Difference diff = new Difference();
+				diff.setPriority(2);
+				diff.setRefNew(gate1);
+				diff.setRefOld(gate2);
+				diff.setType("update gate logic");
+				diff.setDifference(5); //parent gate
+				//sort into list
+				int i;
+				for(i = 0; i < differenceList.size(); i++) {
+					if (differenceList.get(i).getPriority() > diff.getPriority()) {
+						differenceList.add(i, diff);
+						break;
+					}
+				}
+				if (i == differenceList.size()) {
+					differenceList.addLast(diff);
+				}
+				System.out.println("Created: " + diff);
+			}else {
+				System.out.println("Parents are the same: " + gate1.getParentGate().getName() + ", " + gate1.getParentGate().getElementID() + " and " + gate2.getParentGate().getName() + ", " + gate2.getParentGate().getElementID());
+			}
+		}
+		
+		//children
+		//gates
+		boolean checkedGates[] = new boolean[gate2.getChildGate().size()]; //mark gates to not check twice
+		boolean foundGate[] = new boolean[gate1.getChildGate().size()]; //mark if gate was found, not found -> new child gate
+
+		for(int i = 0; i < gate1.getChildGate().size(); i++) {
+			for(int j = 0; j < gate2.getChildGate().size(); j++) {
+				if (gate1.getChildGate().get(i).getElementID() == gate2.getChildGate().get(j).getElementID()) {
+					checkedGates[j] = true;
+					foundGate[i] = true;
+					System.out.println("Same child gate: " + gate1.getChildGate().get(i).getName());
+				}
+			}
+			if (foundGate[i] == false) {
+				System.out.println("New child gate: " + gate1.getChildGate().get(i).getName());
+				//update gate logic
+				Difference diff = new Difference();
+				diff.setPriority(2);
+				diff.setRefNew(gate1);
+				diff.setRefOld(gate2);
+				diff.setType("update gate logic");
+				diff.setDifference(8); //child gate
+				//sort into list
+				int k;
+				for(k = 0; k < differenceList.size(); k++) {
+					if (differenceList.get(k).getPriority() > diff.getPriority()) {
+						differenceList.add(k, diff);
+						break;
+					}
+				}
+				if (k == differenceList.size()) {
+					differenceList.addLast(diff);
+				}
+				System.out.println("Created: " + diff);
+			}
+		}
+		//check for removed gates
+		for(int i = 0; i < gate2.getChildGate().size(); i++) {
+			if (checkedGates[i] == false) {
+				System.out.println("Removed child gate: " + gate2.getChildGate().get(i).getName());
+				//update gate logic
+				Difference diff = new Difference();
+				diff.setPriority(2);
+				diff.setRefNew(gate1);
+				diff.setRefOld(gate2);
+				diff.setType("update gate logic");
+				diff.setDifference(8); //child gate
+				//sort into list
+				int k;
+				for(k = 0; k < differenceList.size(); k++) {
+					if (differenceList.get(k).getPriority() > diff.getPriority()) {
+						differenceList.add(k, diff);
+						break;
+					}
+				}
+				if (k == differenceList.size()) {
+					differenceList.addLast(diff);
+				}
+				System.out.println("Created: " + diff);
+			}
+		}
+		
+		//events
+		boolean checkedEvents[] = new boolean[gate2.getChildEvent().size()]; //mark events to not check twice
+		boolean foundEvent[] = new boolean[gate1.getChildEvent().size()]; //mark if event was found, not found -> new child gate
+		
+		for(int i = 0; i < gate1.getChildEvent().size(); i++) {
+			for(int j = 0; j < gate2.getChildEvent().size(); j++) {
+				if (gate1.getChildEvent().get(i).getElementID() == gate2.getChildEvent().get(j).getElementID()) {
+					checkedEvents[j] = true;
+					foundEvent[i] = true;
+					System.out.println("Same child Event: " + gate1.getChildEvent().get(i).getName());
+				}
+			}
+			if (foundEvent[i] == false) {
+				System.out.println("New child event: " + gate1.getChildEvent().get(i).getName());
+				//update gate logic
+				Difference diff = new Difference();
+				diff.setPriority(2);
+				diff.setRefNew(gate1);
+				diff.setRefOld(gate2);
+				diff.setType("update gate logic");
+				diff.setDifference(8); //child gate
+				//sort into list
+				int k;
+				for(k = 0; k < differenceList.size(); k++) {
+					if (differenceList.get(k).getPriority() > diff.getPriority()) {
+						differenceList.add(k, diff);
+						break;
+					}
+				}
+				if (k == differenceList.size()) {
+					differenceList.addLast(diff);
+				}
+				System.out.println("Created: " + diff);
+			}
+		}
+		//check for removed events
+		for(int i = 0; i < gate2.getChildEvent().size(); i++) {
+			if (checkedEvents[i] == false) {
+				System.out.println("Removed child event: " + gate2.getChildEvent().get(i).getName());
+				//update gate logic
+				Difference diff = new Difference();
+				diff.setPriority(2);
+				diff.setRefNew(gate1);
+				diff.setRefOld(gate2);
+				diff.setType("update gate logic");
+				diff.setDifference(2); //name
+				//sort into list
+				int k;
+				for(k = 0; k < differenceList.size(); k++) {
+					if (differenceList.get(k).getPriority() > diff.getPriority()) {
+						differenceList.add(k, diff);
+						break;
+					}
+				}
+				if (k == differenceList.size()) {
+					differenceList.addLast(diff);
+				}
+				System.out.println("Created: " + diff);
+			}
+		}
+		
+		//compare spares, check for new spares or if child gates became spares...
+		//spares
+		Spare tmp1 = null;
+		Spare tmp2 = null;
+		
+		if (gate1.eClass().getName().compareTo("Spare") == 0) {
+			tmp1 = (Spare) gate1;
+			
+			if (gate2.eClass().getName().compareTo("Spare") == 0) {
+				tmp2 = (Spare) gate2;
+				
+				System.out.println(tmp1.getName() + " and " + tmp2.getName() + " are both Spare gates, checking spares...");
+				boolean checkedSpares[] = new boolean[tmp2.getSpares().size()]; //mark Spares to not check twice
+				boolean foundSpares[] = new boolean[tmp1.getSpares().size()]; //mark if a spare was found, not found -> new spare
+				
+				for(int i = 0; i < tmp1.getSpares().size(); i++) {
+					for(int j = 0; j < tmp2.getSpares().size(); j++) {
+						if (tmp1.getSpares().get(i).getElementID() == tmp2.getSpares().get(j).getElementID()) {
+							checkedSpares[j] = true;
+							foundSpares[i] = true;
+							System.out.println("Same spare: " + tmp1.getSpares().get(i).getName());
+						}
+					}
+					if (foundSpares[i] == false) {
+						System.out.println("New spare: " + tmp1.getSpares().get(i).getName());
+						//update gate logic
+						Difference diff = new Difference();
+						diff.setPriority(2);
+						diff.setRefNew(gate1);
+						diff.setRefOld(gate2);
+						diff.setType("update gate logic");
+						diff.setDifference(13); //spare
+						//sort into list
+						int k;
+						for(k = 0; k < differenceList.size(); k++) {
+							if (differenceList.get(k).getPriority() > diff.getPriority()) {
+								differenceList.add(k, diff);
+								break;
+							}
+						}
+						if (k == differenceList.size()) {
+							differenceList.addLast(diff);
+						}
+						System.out.println("Created: " + diff);
+					}
+				}
+				//check for removed events
+				for(int i = 0; i < tmp2.getSpares().size(); i++) {
+					if (checkedSpares[i] == false) {
+						System.out.println("Removed spare: " + tmp2.getSpares().get(i).getName());
+						//update gate logic
+						Difference diff = new Difference();
+						diff.setPriority(2);
+						diff.setRefNew(gate1);
+						diff.setRefOld(gate2);
+						diff.setType("update gate logic");
+						diff.setDifference(13); //spare
+						//sort into list
+						int k;
+						for(k = 0; k < differenceList.size(); k++) {
+							if (differenceList.get(k).getPriority() > diff.getPriority()) {
+								differenceList.add(k, diff);
+								break;
+							}
+						}
+						if (k == differenceList.size()) {
+							differenceList.addLast(diff);
+						}
+						System.out.println("Created: " + diff);
+					}
+				}
+			}else {
+				System.out.println(tmp1.getName() + " is now a Spare gate");
+				//same as gate type, redundant?
+				//update gate logic
+				Difference diff = new Difference();
+				diff.setPriority(2);
+				diff.setRefNew(gate1);
+				diff.setRefOld(gate2);
+				diff.setType("update gate logic");
+				diff.setDifference(14); //spare
+				//sort into list
+				int i;
+				for(i = 0; i < differenceList.size(); i++) {
+					if (differenceList.get(i).getPriority() > diff.getPriority()) {
+						differenceList.add(i, diff);
+						break;
+					}
+				}
+				if (i == differenceList.size()) {
+					differenceList.addLast(diff);
+				}
+				System.out.println("Created: " + diff);
+			}			
+		}else {
+			if (gate2.eClass().getName().compareTo("Spare") == 0) {
+				System.out.println(gate1.getName() + " is no longer a Spare gate");
+				//update gate logic
+				Difference diff = new Difference();
+				diff.setPriority(2);
+				diff.setRefNew(gate1);
+				diff.setRefOld(gate2);
+				diff.setType("update gate logic");
+				diff.setDifference(14); //gate type spare
+				//sort into list
+				int i;
+				for(i = 0; i < differenceList.size(); i++) {
+					if (differenceList.get(i).getPriority() > diff.getPriority()) {
+						differenceList.add(i, diff);
+						break;
+					}
+				}
+				if (i == differenceList.size()) {
+					differenceList.addLast(diff);
+				}
+				System.out.println("Created: " + diff);
+			}
+		}
+		
+		
+	}
+	//TODO remove sysouts
+	public void compareEvents(Event event1, Event event2) {
+		
+		//TODO remove id check later
+		//compare IDs
+		if (event1.getElementID() != event2.getElementID()) {
+			System.out.println("Event IDs are different: " + event1.getElementID() + " vs " + event2.getElementID());
+			//TODO
+		}else {
+			System.out.println("Event IDs are the same: " + event1.getElementID());
+		}
+		//compare names
+		if (event1.getName().compareTo(event2.getName()) != 0) {
+			System.out.println("Event names are different: " + event1.getName() + " vs " + event2.getName());
+			System.out.println("Adding to difference list...");
+			
+			//update transition labels
+			Difference diff = new Difference();
+			diff.setPriority(1);
+			diff.setRefNew(event1);
+			diff.setRefOld(event2);
+			diff.setType("update name");
+			diff.setDifference(1); //name
+			//sort into list
+			int i;
+			for(i = 0; i < differenceList.size(); i++) {
+				if (differenceList.get(i).getPriority() > diff.getPriority()) {
+					differenceList.add(i, diff);
+					break;
+				}
+			}
+			if (i == differenceList.size()) {
+				differenceList.addLast(diff);
+			}
+			System.out.println("Created: " + diff);
+		}else {
+			System.out.println("Event names are the same: " + event1.getName());
+		}
+		//seqence position
+		if (event1.getSequencePosition() != event2.getSequencePosition()) {
+			System.out.println("Event sequence positions are different: " + event1.getSequencePosition() + " vs " + event2.getSequencePosition());
+			System.out.println("Adding to difference list...");
+			
+			//update gate logic
+			Difference diff = new Difference();
+			diff.setPriority(2);
+			diff.setRefNew(event1);
+			diff.setRefOld(event2);
+			diff.setType("update gate logic");
+			diff.setDifference(3); //sequence position
+			//sort into list
+			int i;
+			for(i = 0; i < differenceList.size(); i++) {
+				if (differenceList.get(i).getPriority() > diff.getPriority()) {
+					differenceList.add(i, diff);
+					break;
+				}
+			}
+			if (i == differenceList.size()) {
+				differenceList.addLast(diff);
+			}
+			System.out.println("Created: " + diff);
+		}else {
+			System.out.println("Event sequence positions are the same: " + event1.getSequencePosition());
+		}
+		//probability
+		if (event1.getProbability() != event2.getProbability()) {
+			System.out.println("Event probabilities are different: " + event1.getProbability() + " vs " + event2.getProbability());
+			System.out.println("Adding to difference list...");
+			
+			//update transition labels
+			Difference diff = new Difference();
+			diff.setPriority(1);
+			diff.setRefNew(event1);
+			diff.setRefOld(event2);
+			diff.setType("update probability");
+			diff.setDifference(2); //probability
+			//sort into list
+			int i;
+			for(i = 0; i < differenceList.size(); i++) {
+				if (differenceList.get(i).getPriority() > diff.getPriority()) {
+					differenceList.add(i, diff);
+					break;
+				}
+			}
+			if (i == differenceList.size()) {
+				differenceList.addLast(diff);
+			}
+			System.out.println("Created: " + diff);
+		}else {
+			System.out.println("Event probabilities are the same: " + event1.getProbability());
+		}
+		//parent gate
+		if (event1.getParentGate().getElementID() != event2.getParentGate().getElementID()) {
+			System.out.println("Event parent gates are different: " + event1.getParentGate().getElementID() + " vs " + event2.getParentGate().getElementID());
+			System.out.println("Adding to difference list...");
+			
+			//update gate logic
+			Difference diff = new Difference();
+			diff.setPriority(2);
+			diff.setRefNew(event1);
+			diff.setRefOld(event2);
+			diff.setType("update gate logic");
+			diff.setDifference(5); //parent gate
+			//sort into list
+			int i;
+			for(i = 0; i < differenceList.size(); i++) {
+				if (differenceList.get(i).getPriority() > diff.getPriority()) {
+					differenceList.add(i, diff);break;
+				}
+			}
+			if (i == differenceList.size()) {
+				differenceList.addLast(diff);
+			}
+			System.out.println("Created: " + diff);
+		}else {
+			System.out.println("Event parents are the same: " + event1.getParentGate().getElementID());
+		}
+		//dependency
+		if (event1.getDependency() != null) {
+			if (event2.getDependency() != null) {
+				if (event1.getDependency().getElementID() != event2.getDependency().getElementID()) {
+					System.out.println("Event dependencies are different: " + event1.getDependency().getElementID() + " vs " + event2.getDependency().getElementID());
+					//check combinations of dependency types, 1. seq, seq, 2. seq, dep. 3. dep, seq, 4. dep, dep
+					String type1 = event1.getDependency().eClass().getName();
+					String type2 = event2.getDependency().eClass().getName();
+					Difference diff = new Difference();
+					int i;
+					switch (type1+type2) {
+					case "SequenceSequence": //update gate logic
+						//update gate logic
+						diff.setPriority(2);
+						diff.setRefNew(event1);
+						diff.setRefOld(event2);
+						diff.setType("update gate logic");
+						diff.setDifference(6); //dependency
+						//sort into list
+						for(i = 0; i < differenceList.size(); i++) {
+							if (differenceList.get(i).getPriority() > diff.getPriority()) {
+								differenceList.add(i, diff);
+								break;
+							}
+						}
+						if (i == differenceList.size()) {
+							differenceList.addLast(diff);
+						}
+						System.out.println("Created: " + diff);
+						break;
+
+					case "SequenceFunctionalDependency": //remove trans + update g logic
+						//update gate logic
+						diff.setPriority(2);
+						diff.setRefNew(event1);
+						diff.setRefOld(event2);
+						diff.setType("update gate logic");
+						diff.setDifference(6); //dependency
+						//sort into list
+						for(i = 0; i < differenceList.size(); i++) {
+							if (differenceList.get(i).getPriority() > diff.getPriority()) {
+								differenceList.add(i, diff);
+								break;
+							}
+						}
+						if (i == differenceList.size()) {
+							differenceList.addLast(diff);
+						}
+						System.out.println("Created: " + diff);
+						//remove trans
+						diff.setPriority(2);
+						diff.setRefNew(event1);
+						diff.setRefOld(event2);
+						diff.setType("remove transitions");
+						diff.setDifference(6); //dependency
+						//sort into list
+						for(i = 0; i < differenceList.size(); i++) {
+							if (differenceList.get(i).getPriority() > diff.getPriority()) {
+								differenceList.add(i, diff);
+								break;
+							}
+						}
+						if (i == differenceList.size()) {
+							differenceList.addLast(diff);
+						}
+						System.out.println("Created: " + diff);
+						break;
+						
+					case "FunctionalDependencySequence": //add trans + update g logic
+						//add trans
+						diff.setPriority(2);
+						diff.setRefNew(event1);
+						diff.setRefOld(event2);
+						diff.setType("add transitions");
+						diff.setDifference(6); //dependency
+						//sort into list
+						for(i = 0; i < differenceList.size(); i++) {
+							if (differenceList.get(i).getPriority() > diff.getPriority()) {
+								differenceList.add(i, diff);
+								break;
+							}
+						}
+						if (i == differenceList.size()) {
+							differenceList.addLast(diff);
+						}
+						System.out.println("Created: " + diff);
+						//update gate logic
+						diff.setPriority(2);
+						diff.setRefNew(event1);
+						diff.setRefOld(event2);
+						diff.setType("update gate logic");
+						diff.setDifference(6); //dependency
+						//sort into list
+						for(i = 0; i < differenceList.size(); i++) {
+							if (differenceList.get(i).getPriority() > diff.getPriority()) {
+								differenceList.add(i, diff);
+								break;
+							}
+						}
+						if (i == differenceList.size()) {
+							differenceList.addLast(diff);
+						}
+						System.out.println("Created: " + diff);
+						break;
+					
+					case "FunctionalDependencyFunctionalDependency": //remove + add transitions
+						//add transitions
+						diff.setPriority(2);
+						diff.setRefNew(event1);
+						diff.setRefOld(event2);
+						diff.setType("add transitions");
+						diff.setDifference(6); //dependency
+						//sort into list
+						for(i = 0; i < differenceList.size(); i++) {
+							if (differenceList.get(i).getPriority() > diff.getPriority()) {
+								differenceList.add(i, diff);
+							}
+						}
+						if (i == differenceList.size()) {
+							differenceList.addLast(diff);
+						}
+						System.out.println("Created: " + diff);
+						//remove transitions
+						diff.setPriority(2);
+						diff.setRefNew(event1);
+						diff.setRefOld(event2);
+						diff.setType("remove transitions");
+						diff.setDifference(6); //dependency
+						//sort into list
+						for(i = 0; i < differenceList.size(); i++) {
+							if (differenceList.get(i).getPriority() > diff.getPriority()) {
+								differenceList.add(i, diff);
+							}
+						}
+						if (i == differenceList.size()) {
+							differenceList.addLast(diff);
+						}
+						System.out.println("Created: " + diff);
+						break;	
+					}
+				}else {
+					System.out.println("Event dependiencies are the same: " + event1.getDependency().getElementID());
+				}
+			}
+			else { //added dependency
+				if (event1.getDependency().eClass().getName() == "Sequence") {
+					//update gate logic
+					Difference diff = new Difference();
+					diff.setPriority(2);
+					diff.setRefNew(event1);
+					diff.setRefOld(event2);
+					diff.setType("update gate logic");
+					diff.setDifference(6); //dependency
+					//sort into list
+					int i;
+					for(i = 0; i < differenceList.size(); i++) {
+						if (differenceList.get(i).getPriority() > diff.getPriority()) {
+							differenceList.add(i, diff);
+							break;
+						}
+					}
+					if (i == differenceList.size()) {
+						differenceList.addLast(diff);
+					}
+					System.out.println("Created: " + diff);
+				}else { //functional dependency
+					//add transitions
+					Difference diff = new Difference();
+					diff.setPriority(2);
+					diff.setRefNew(event1);
+					diff.setRefOld(event2);
+					diff.setType("add transitions");
+					diff.setDifference(6); //dependency
+					//sort into list
+					int i;
+					for(i = 0; i < differenceList.size(); i++) {
+						if (differenceList.get(i).getPriority() > diff.getPriority()) {
+							differenceList.add(i, diff);
+							break;
+						}
+					}
+					if (i == differenceList.size()) {
+						differenceList.addLast(diff);
+					}
+					System.out.println("Created: " + diff);
+				}
+			}
+		}else {//removed dependency
+			if (event2.getDependency() != null) { //removed dependency
+				if (event2.getDependency().eClass().getName() == "Sequence") {
+					//update gate logic
+					Difference diff = new Difference();
+					diff.setPriority(2);
+					diff.setRefNew(event1);
+					diff.setRefOld(event2);
+					diff.setType("update gate logic");
+					diff.setDifference(6); //dependency
+					//sort into list
+					int i;
+					for(i = 0; i < differenceList.size(); i++) {
+						if (differenceList.get(i).getPriority() > diff.getPriority()) {
+							differenceList.add(i, diff);
+							break;
+						}
+					}
+					if (i == differenceList.size()) {
+						differenceList.addLast(diff);
+					}
+					System.out.println("Created: " + diff);
+				}else { //functional dependency
+					//remove transitions
+					Difference diff = new Difference();
+					diff.setPriority(2);
+					diff.setRefNew(event1);
+					diff.setRefOld(event2);
+					diff.setType("remove transitions");
+					diff.setDifference(6); //dependency
+					//sort into list
+					int i;
+					for(i = 0; i < differenceList.size(); i++) {
+						if (differenceList.get(i).getPriority() > diff.getPriority()) {
+							differenceList.add(i, diff);
+							break;
+						}
+					}
+					if (i == differenceList.size()) {
+						differenceList.addLast(diff);
+					}
+					System.out.println("Created: " + diff);
+				}
+			}
+		}
+		
+		
+	}
+	
+	public void compareDependencies(Dependency dep1, Dependency dep2) {
+		
+		//id
+		if (dep1.getElementID() != dep2.getElementID()) {
+			System.out.println("Dependency IDs are different: " + dep1.getElementID() + " vs " + dep2.getElementID());
+			//TODO
+		}else {
+			System.out.println("Dependency IDs are the same: " + dep1.getElementID());
+		}
+		//name
+		if (dep1.getName().compareTo(dep2.getName()) != 0) {
+			System.out.println("Dependency names are different: " + dep1.getElementID() + " vs " + dep2.getElementID());
+			//TODO relevant???
+			Difference diff = new Difference();
+			diff.setPriority(1);
+			diff.setRefNew(dep1);
+			diff.setRefOld(dep2);
+			diff.setType("update label");
+			diff.setDifference(1); //name
+			//sort into list
+			int k;
+			for(k = 0; k < differenceList.size(); k++) {
+				if (differenceList.get(k).getPriority() > diff.getPriority()) {
+					differenceList.add(k, diff);
+					break;
+				}
+			}
+			if (k == differenceList.size()) {
+				differenceList.addLast(diff);
+			}
+			System.out.println("Created: " + diff);
+		}else {
+			System.out.println("Dependency names are the same: " + dep1.getName());
+		}
+		//events
+		boolean checkedEvents[] = new boolean[dep2.getEvents().size()];
+		boolean foundEvent[] = new boolean[dep1.getEvents().size()];
+		
+		for(int i = 0; i < dep1.getEvents().size(); i++) {
+			for(int j = 0; j < dep2.getEvents().size(); j++) {
+				if (dep1.getEvents().get(i).getElementID() == dep2.getEvents().get(j).getElementID()) {
+					checkedEvents[j] = true;
+					foundEvent[i] = true;
+					System.out.println("Same Event: " + dep1.getEvents().get(i).getName());
+				}
+			}
+			if (foundEvent[i] == false) {
+				System.out.println("New event: " + dep1.getEvents().get(i).getName());
+				//update gate logic
+				Difference diff = new Difference();
+				diff.setPriority(2);
+				diff.setRefNew(dep1);
+				diff.setRefOld(dep2);
+				diff.setType("update gate logic");
+				diff.setDifference(20); //new event
+				//sort into list
+				int k;
+				for(k = 0; k < differenceList.size(); k++) {
+					if (differenceList.get(k).getPriority() > diff.getPriority()) {
+						differenceList.add(k, diff);
+						break;
+					}
+				}
+				if (k == differenceList.size()) {
+					differenceList.addLast(diff);
+				}
+				System.out.println("Created: " + diff);
+			}
+		}
+		//check for removed events
+		for(int i = 0; i < dep2.getEvents().size(); i++) {
+			if (checkedEvents[i] == false) {
+				System.out.println("Removed event: " + dep2.getEvents().get(i).getName());
+				//update gate logic
+				Difference diff = new Difference();
+				diff.setPriority(2);
+				diff.setRefNew(dep1);
+				diff.setRefOld(dep2);
+				diff.setType("update gate logic");
+				diff.setDifference(21); //removed event
+				//sort into list
+				int k;
+				for(k = 0; k < differenceList.size(); k++) {
+					if (differenceList.get(k).getPriority() > diff.getPriority()) {
+						differenceList.add(k, diff);
+						break;
+					}
+				}
+				if (k == differenceList.size()) {
+					differenceList.addLast(diff);
+				}
+				System.out.println("Created: " + diff);
+			}
+		}
+		
+	}
+	
+	public void loadOldStates(String stateFilePath) {
+		
+        String line = null;
+
+        try {
+            FileReader stateReader = new FileReader(stateFilePath);
+            BufferedReader bufferedStateReader = new BufferedReader(stateReader);
+            //int[] state = new int[oldEventList.size() + oldGateList.size()];
+
+            while((line = bufferedStateReader.readLine()) != null) {
+            	int[] state = new int[oldEventList.size() + oldGateList.size()];
+            	System.out.println(line);
+            	//trim for easier access
+                line = line.substring(4, line.length()-1);
+                //split the values to convert into integers
+                String[] tmp = line.split(", ");
+                for (int i = 0; i < tmp.length; i++) {
+					int tmp2 = Integer.parseInt(tmp[i]);
+					//System.out.print(tmp2);
+					state[i] = tmp2;
+					//System.out.print(state[i]);
+				}
+                //System.out.println("");
+                getOldStateList().add(state);
+            }   
+            
+            bufferedStateReader.close();         
+        }
+        catch(FileNotFoundException ex) {
+            System.out.println("unable to open file " + stateFilePath);                
+        }
+        catch(IOException ex) {
+            System.out.println("error reading file " + stateFilePath);                  
+        }
+        
+	}
+	
+	public void incrementalTransformation(CTMC ctmc) {
+		//create a transition list for convenience
+		/*oldTransitionList = new LinkedList<Transition>();
+		
+		for (int i = 0; i < ctmc.getStates().size(); i++) {
+			for (int j = 0; j < ctmc.getStates().get(i).getOut().size(); j++) {
+				oldTransitionList.add(ctmc.getStates().get(i).getOut().get(j));
+			}
+		}*/
+		
+		//TODO flags for what type of update is necessary
+		
+		//1. label update
+		System.out.println("starting label updates...");
+		//look op states
+		for (int i = 0; i < ctmc.getStates().size(); i++) { 
+			//look up transitions
+			boolean[] alreadySet = new boolean[eventList.size()];
+			for (int j = 0; j < ctmc.getStates().get(i).getOut().size(); j++) {
+				//System.out.println(ctmc.getStates().get(i).getOut().get(j));
+				//look up if there is a possible change(name, probability)
+				for (int k = 0; k < differenceList.size(); k++) {
+					//System.out.println("difference " + k);
+					if (differenceList.get(k).getPriority() == 1 && differenceList.get(k).getRefOld().eClass().getName() == "Event") {
+						//check if it applies to the current transition 
+						int tmp = differenceList.get(k).getDifference();
+						 switch (tmp) {
+						case 1: // change name
+							//System.out.println("case 1");
+							//System.out.println(differenceList.get(k).getRefOld().getName());
+							//System.out.println("vs");
+							//System.out.println(ctmc.getStates().get(i).getOut().get(j).getName());
+							if (differenceList.get(k).getRefOld().getName().compareTo(ctmc.getStates().get(i).getOut().get(j).getName()) == 0) {
+								ctmc.getStates().get(i).getOut().get(j).setName(differenceList.get(k).getRefNew().getName());
+								System.out.println("set new name: " + ctmc.getStates().get(i).getOut().get(j).getName());
+							}
+							
+							break;
+
+						case 2: // change probability
+							//System.out.println("case 2");
+							//System.out.println(differenceList.get(k).getRefOld().getProbability());
+							//System.out.println("vs");
+							//System.out.println(ctmc.getStates().get(i).getOut().get(j).getProbability());
+							if (differenceList.get(k).getRefNew().getName().compareTo(ctmc.getStates().get(i).getOut().get(j).getName()) == 0
+									&& differenceList.get(k).getRefOld().getProbability() == ctmc.getStates().get(i).getOut().get(j).getProbability()
+									&& alreadySet[eventList.indexOf(differenceList.get(k).getRefNew())] == false) {
+								ctmc.getStates().get(i).getOut().get(j).setProbability(differenceList.get(k).getRefNew().getProbability());
+								System.out.println("set new probibility: " + ctmc.getStates().get(i).getOut().get(j).getProbability());
+								alreadySet[eventList.indexOf(differenceList.get(k).getRefNew())] = true;
+							}
+							
+							break;
+						}
+					}else {
+						break;
+					}
+				}
+			}
+		}
+		
+		//TODO working with a transition list, delete or use later
+		/*
+		for (int i = 0; i < oldTransitionList.size(); i++) {
+			
+			boolean alreadySet[] = new boolean[eventList.size()]; //in case there is a functional dependency and both transitions have the same probability
+		
+			for (int j = 0; j < differenceList.size(); j++) {
+				if (differenceList.get(j).getPriority() == 1) { //updating labels
+					String difference = differenceList.get(j).getType();
+					switch (difference) {
+					case "update name":
+						System.out.println(1);
+						if (oldTransitionList.get(i).getName().compareTo(differenceList.get(j).getRefOld().getName()) == 0) {
+							oldTransitionList.get(i).setName(differenceList.get(j).getRefNew().getName());
+						}
+						
+						break;
+
+					case "update probability":
+						System.out.println(2);
+						//only change prob. if the names and prob. match and it wasn't already set
+						if (oldTransitionList.get(i).getProbability() == differenceList.get(j).getRefOld().getProbability() &&
+								oldTransitionList.get(i).getName().compareTo(differenceList.get(j).getRefNew().getName()) == 0 &&
+								alreadySet[eventList.indexOf(differenceList.get(j).getRefNew())] == false) {
+							oldTransitionList.get(i).setProbability(differenceList.get(j).getRefNew().getProbability());
+							alreadySet[eventList.indexOf(differenceList.get(j).getRefNew())] = true;
+						}
+						break;
+					}
+				}
+			}
+		}*/
+		
+		//label update end
 	}
 	
 }//end transformer

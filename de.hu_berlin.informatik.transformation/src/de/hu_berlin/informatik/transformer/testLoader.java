@@ -29,9 +29,9 @@ public class testLoader {
 
 	public static void main(String[] args) {
 		
-		String tmp ="File:///C:/Users/Rob X220/runtime-EclipseApplication/de.hu_berlin.informatik.UpdateDFTs/Huge.dynamicfaulttree";
+		String tmp ="File:/home/rob/runtime-EclipseApplication/TestModels/2.Label update/LabelTest.dynamicfaulttree";
 		URI testDFT_URI = URI.createURI(tmp);
-		String uri = "/C:/Users/Rob%20X220/runtime-EclipseApplication/de.hu_berlin.informatik.UpdateCTMCs/Huge.ctmc";
+		String uri = "/home/rob/runtime-EclipseApplication/TestModels/2.Label update/LabelTest.ctmc";
 		
 		
 		DFT dft;
@@ -66,10 +66,6 @@ public class testLoader {
 			System.out.println(dftToCdmc.getFunctionalDependencyList().get(m).getName());
 		}
 		
-		//test duplicate
-		
-		
-		//dftToCdmc.transformation(true); merging, probably shelved
 		dftToCdmc.transformation();
 		
 		//String uri = "/C:/Users/Rob%20X220/runtime-EclipseApplication/de.hu_berlin.informatik.UpdateCTMCs/and3.ctmc";
@@ -81,17 +77,11 @@ public class testLoader {
 		
 		
 		//testing preserving data for incremental transformation/update
-		String folderPath = "C:/Users/Rob X220/runtime-EclipseApplication/de.hu_berlin.informatik.UpdateDFTs/Example/";
-		/*File currentFolder = new File(folder);
-		File workingFolder = new File(currentFolder, "DATA2");
-		System.out.println(workingFolder.getAbsolutePath());
-		if (!workingFolder.exists()) {
-            workingFolder.mkdir();
-        }*/
+		String folderPath = "/home/rob/runtime-EclipseApplication/TestModels/2.Label update/";
 		String folderName = dft.getName() + " Data";
-		dftToCdmc.saveTransformationData(folderPath, folderName);
+		dftToCdmc.saveTransformationData(folderPath, folderName, dft);
 		System.out.println("made a new folder at " + folderPath+folderName);
-		
+
 		//end of test
 		System.out.println("ok!spaghetti better than mod pizza?");
 		

@@ -11,16 +11,16 @@ public class testComparison {
 	public static void main(String[] args) {
 		 
 		//URIs of models
-		//dft 1 
-		String tmp1 ="File:/home/rob/runtime-EclipseApplication/TestModels/2.Label update/LabelTest.dynamicfaulttree";
+		//dft 1, the edited one
+		String tmp1 ="/home/rob/runtime-EclipseApplication/TestModels/4. Catch duplicate/Test.dynamicfaulttree";
 		URI testDFT1_URI = URI.createURI(tmp1);
-		//dft 2
+		//dft 2, the original
 		//String tmp2 ="File:/home/rob/runtime-EclipseApplication/TestModels/Test.dynamicfaulttree";
-		String tmp2 ="File:/home/rob/runtime-EclipseApplication/TestModels/2.Label update/Label Data/LabelOld.dynamicfaulttree";
+		String tmp2 ="File:/home/rob/runtime-EclipseApplication/TestModels/4. Catch duplicate/Test Data/TestOld.dynamicfaulttree";
 		URI testDFT2_URI = URI.createURI(tmp2);
 		
 		//ctmc 1
-		String tmp3 ="File:/home/rob/runtime-EclipseApplication/TestModels/2.Label update/LabelTest.ctmc";
+		String tmp3 ="File:/home/rob/runtime-EclipseApplication/TestModels/4. Catch duplicate/Test.ctmc";
 		URI testCTMC_URI = URI.createURI(tmp3);
 		
 		

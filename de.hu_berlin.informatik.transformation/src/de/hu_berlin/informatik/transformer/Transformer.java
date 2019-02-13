@@ -285,8 +285,21 @@ public class Transformer {
 			
 			Event tmpE = eventQueue.peek();
 			
-			if(tmpE.getDependency() != null && !dependencyList.contains(tmpE.getDependency())) {
+			//TODO remove if test dependency fix works
+			/*if(tmpE.getDependency() != null && !dependencyList.contains(tmpE.getDependency())) {
 				dependencyList.add(tmpE.getDependency());
+			}
+			*/
+			
+			/*
+			 * test dependency fix
+			 */
+			if (tmpE.getDependency() != null) {
+				for (int i = 0; i < tmpE.getDependency().size(); i++) {
+					if (!dependencyList.contains(tmpE.getDependency().get(i))) {
+						dependencyList.add(tmpE.getDependency().get(i));
+					}
+				}
 			}
 			
 			//eventList.add(eventQueue.poll());
@@ -360,8 +373,21 @@ public class Transformer {
 			
 			Event tmpE = oldEventQueue.peek();
 			
-			if(tmpE.getDependency() != null && !oldDependencyList.contains(tmpE.getDependency())) {
+			//TODO remove if dependency fix works
+			/*if(tmpE.getDependency() != null && !oldDependencyList.contains(tmpE.getDependency())) {
 				oldDependencyList.add(tmpE.getDependency());
+			}
+			*/
+			
+			/*
+			 * test dependency fix
+			 */
+			if (tmpE.getDependency() != null) {
+				for (int i = 0; i < tmpE.getDependency().size(); i++) {
+					if (!oldDependencyList.contains(tmpE.getDependency().get(i))) {
+						oldDependencyList.add(tmpE.getDependency().get(i));
+					}
+				}
 			}
 			
 			//eventList.add(eventQueue.poll());
@@ -1596,7 +1622,7 @@ public class Transformer {
 			diff.setPriority(1);
 			diff.setRefNew(null);
 			diff.setRefOld(null);
-			diff.setType("update labels");
+			diff.setType("CTMC name");
 			diff.setDifference(15); //dfts
 			//sort into list
 			int i;
@@ -1615,6 +1641,8 @@ public class Transformer {
 			System.out.println("DFT names are the same: " + dftName);
 		}
 		
+		/*
+		//this changes nothing
 		//compare TLEs
 		//names
 		if (dft.getTopLevelEvent().getName().compareTo(oldDFT.getTopLevelEvent().getName()) != 0) {
@@ -1647,7 +1675,7 @@ public class Transformer {
 			//TODO different tle...
 		}else {
 			System.out.println("TLE IDs are the same: " + oldDFT.getTopLevelEvent().getElementID());
-		}
+		}*/
 		
 		//compare gates
 		boolean checkedGates[] = new boolean[oldGateList.size()]; //mark if gates were found or not
@@ -1715,11 +1743,15 @@ public class Transformer {
 		boolean foundEvents[] = new boolean[eventList.size()]; //mark if it's a new or old event
 		
 		for(int i = 0; i < eventList.size(); i++) {
+			System.out.println(eventList.get(i));
 			for(int j = 0; j < oldEventList.size(); j++) {
+				System.out.println(oldEventList.get(j));
 				if (eventList.get(i).getElementID() == oldEventList.get(j).getElementID()) {
+					System.out.println(eventList.get(i).getName());
+					System.out.println(oldEventList.get(j).getName());
 					checkedEvents[j] = true;
 					foundEvents[i] = true;
-					System.out.println("Comparing events " + eventList.get(i).getName() + " and " + oldEventList.get(i).getName() + "...");
+					System.out.println("Comparing events " + eventList.get(i).getName() + " and " + oldEventList.get(j).getName() + "...");
 					compareEvents(eventList.get(i), oldEventList.get(j));
 				}
 			}
@@ -2316,6 +2348,8 @@ public class Transformer {
 			System.out.println("Event parents are the same: " + event1.getParentGate().getElementID());
 		}
 		//dependency
+		//TODO remove if dependency fix works
+		/*
 		if (event1.getDependency() != null) {
 			if (event2.getDependency() != null) {
 				if (event1.getDependency().getElementID() != event2.getDependency().getElementID()) {
@@ -2547,7 +2581,52 @@ public class Transformer {
 				}
 			}
 		}
+		*/
 		
+		/*
+		 * dependency fix
+		 */
+		if (event1.getDependency() != null) {
+			if (event2.getDependency() != null) {
+				//check if the have the same events
+				boolean checkedDep[] = new boolean[event2.getDependency().size]; //mark dep to not check twice
+				boolean foundDep[] = new boolean[event1.getDependency().size()]; //mark if dep was found, not found -> new dep
+
+				for (int i = 0; i < event1.getDependency().size(); i++) {
+					for (int j = 0; j < event2.getDependency().size(); j++) {
+						if (event1.getDependency().get(i).getElementID() == event2.getDependency().get(j).getElementID()) {
+							checkedDep[i] = true;
+							foundDep[i] = true;
+							System.out.println("Same Dependency: " + event1.getDependency().get(i).getName());
+						}
+					}
+					//check for new dependencies
+					if (foundDep[i] == false) { 
+						System.out.println("New Dependency: " + event1.getDependency().get(i).getName());
+						//TODO check what type and add dep.
+					}
+					
+				}
+				//check for removed dependencies
+				for(int i = 0; i < event2.getDependency().size(); i++) {
+					if (checkedDep[i] == false) {
+						System.out.println("Removed Dependency: " + event2.getDependency().get(i).getName());
+						//update gate logic
+						//TODO diff
+					}
+				}
+				
+				
+			}else {//added dependency check
+				//TODO add diff
+				System.out.println("added dependencies to " + event1.getName());
+			}
+		}else {//removed dependency check
+			if (event2.getDependency() != null) {
+				//TODO add diff
+				System.out.println("removed dependencies from " + event1.getName());
+			}
+		}
 		
 	}
 	
@@ -2565,7 +2644,7 @@ public class Transformer {
 			System.out.println("Dependency names are different: " + dep1.getElementID() + " vs " + dep2.getElementID());
 			//TODO relevant???
 			Difference diff = new Difference();
-			diff.setPriority(1);
+			diff.setPriority(2);
 			diff.setRefNew(dep1);
 			diff.setRefOld(dep2);
 			diff.setType("update label");
@@ -2646,6 +2725,38 @@ public class Transformer {
 			}
 		}
 		
+		//if dep1 is a fdep, check for probability chnages
+		if (dep1.eClass().getName() == "FunctionalDependency") {
+			FunctionalDependency tmp1 = (FunctionalDependency) dep1;
+			FunctionalDependency tmp2 = (FunctionalDependency) dep2;
+			
+			//check probabilities
+			if (tmp1.getProbability() != tmp2.getProbability()) {
+				System.out.println("changed probability: " + tmp1.getProbability() + " vs " + tmp2.getProbability());
+				//update labels
+				Difference diff = new Difference();
+				diff.setPriority(1);
+				diff.setRefNew(dep1);
+				diff.setRefOld(dep2);
+				diff.setType("update gate logic");
+				diff.setDifference(24); //fdep changed probability
+				//sort into list
+				int k;
+				for(k = 0; k < differenceList.size(); k++) {
+					if (differenceList.get(k).getPriority() > diff.getPriority()) {
+						differenceList.add(k, diff);
+						break;
+					}
+				}
+				if (k == differenceList.size()) {
+					differenceList.addLast(diff);
+				}
+			}else {
+				System.out.println("same probabilites: " + tmp1.getProbability());
+			}
+			
+		}
+		
 	}
 	
 	public void loadOldStates(String stateFilePath) {
@@ -2697,18 +2808,38 @@ public class Transformer {
 		
 		//TODO flags for what type of update is necessary
 		
+		//DFT name changed
+		if (differenceList.getFirst().getDifference() == 15) {//changing the dft name is always the fist diff
+			ctmc.setName(dftName);
+			System.out.println("set new ctmc name: " + ctmc.getName());
+			differenceList.removeFirst();
+		}
+		
+		//TLE changes
+		//nothing to do
+		
+		//number of priority one differences
+		int prioOne;
+		for (prioOne = 0; prioOne < differenceList.size(); prioOne++) {
+			if (differenceList.get(prioOne).getPriority() != 1) {
+				break;
+			}
+		}
+		System.out.println("nr of priority 1 differences: " + prioOne);
+		
+		
 		//1. label update
 		System.out.println("starting label updates...");
 		//look op states
-		for (int i = 0; i < ctmc.getStates().size(); i++) { 
-			//look up transitions
+		/*for (int i = 0; i < ctmc.getStates().size(); i++) { 
 			boolean[] alreadySet = new boolean[eventList.size()];
+			
+			//look up transitions			
 			for (int j = 0; j < ctmc.getStates().get(i).getOut().size(); j++) {
 				//System.out.println(ctmc.getStates().get(i).getOut().get(j));
 				//look up if there is a possible change(name, probability)
-				for (int k = 0; k < differenceList.size(); k++) {
-					//System.out.println("difference " + k);
-					if (differenceList.get(k).getPriority() == 1 && differenceList.get(k).getRefOld().eClass().getName() == "Event") {
+				for (int k = 0; k < prioOne; k++) {
+					if ((differenceList.get(k).getRefOld().eClass().getName() == "Event" || differenceList.get(k).getRefOld().eClass().getName() == "FunctionalDependency")) {
 						//check if it applies to the current transition 
 						int tmp = differenceList.get(k).getDifference();
 						 switch (tmp) {
@@ -2738,13 +2869,206 @@ public class Transformer {
 							}
 							
 							break;
+						
+						case 24: //change fdep probability
+							FunctionalDependency tmp1 = (FunctionalDependency) differenceList.get(k).getRefNew();
+							//check if current trans name is part of the fdep event list
+							boolean relevant = false;
+							for (int l = 0; l < tmp1.getEvents().size(); l++) {
+								if (tmp1.getEvents().get(l).getName().compareTo(ctmc.getStates().get(i).getOut().get(j).getName()) == 0 && l != 0) {
+									relevant = true;
+								}
+							}
+							if (relevant == true) {
+								System.out.println("case relevant for " + ctmc.getStates().get(i).getOut().get(j).getName());
+								//check if the trans has to be changed
+								LinkedList<Transition> indexOfTrans = new LinkedList<Transition>();
+								for (int l = 0; l < ctmc.getStates().get(i).getOut().size(); l++) {
+									if (ctmc.getStates().get(i).getOut().get(l).getName().compareTo(ctmc.getStates().get(i).getOut().get(j).getName()) == 0) {
+										indexOfTrans.add(ctmc.getStates().get(i).getOut().get(l));
+									}
+								}
+								if (indexOfTrans.indexOf(ctmc.getStates().get(i).getOut().get(j)) == eventList.indexOf(tmp1)+2) {
+									if (tmp1.getProbability() != ctmc.getStates().get(i).getOut().get(j).getProbability()) {
+										ctmc.getStates().get(i).getOut().get(j).setProbability(tmp1.getProbability());
+										System.out.println("set probability " +ctmc.getStates().get(i).getOut().get(j).getProbability() 
+												+ " for " + ctmc.getStates().get(i).getOut().get(j).getName());
+									}
+								}
+								
+								
+							}				
+							
+							//test fdep 2
+							for (int l = 0; l < alreadySet.length; l++) {
+								
+							}
+							
+							break;
 						}
 					}else {
 						break;
 					}
 				}
 			}
+		}*/
+		
+		//version 3
+		for (int i = 0; i < prioOne; i++) {
+			System.out.println(i);
+			//check every state
+			states: for (int j = 0; j < ctmc.getStates().size(); j++) {
+				//check every transition
+				for (int k = 0; k < ctmc.getStates().get(j).getOut().size(); k++) {
+					//check the difference
+					switch (differenceList.get(i).getDifference()) {
+					case 1: //change label name
+						//check name with old ref name
+						if (differenceList.get(i).getRefOld().getName().compareTo(ctmc.getStates().get(j).getOut().get(k).getName()) == 0) {
+							//change name to new ref name
+							ctmc.getStates().get(j).getOut().get(k).setName(differenceList.get(i).getRefNew().getName());
+							System.out.println("set new name: " + ctmc.getStates().get(j).getOut().get(k).getName());
+						}
+						break;
+					case 2: //change probability
+						//check name of trans with olf ref, then check probabilities
+						if (differenceList.get(i).getRefNew().getName().compareTo(ctmc.getStates().get(j).getOut().get(k).getName()) == 0 &&
+						    differenceList.get(i).getRefOld().getProbability() == ctmc.getStates().get(j).getOut().get(k).getProbability()) {
+							//set new probability
+							ctmc.getStates().get(j).getOut().get(k).setProbability(differenceList.get(i).getRefNew().getProbability());
+							System.out.println("set new probability : " + ctmc.getStates().get(j).getOut().get(k).getProbability());
+							continue states;
+						}
+						break;
+					case 24: //change probability because of a functional dependability
+						//TODO maybe seperate it from the other cases
+						FunctionalDependency tmp1 = (FunctionalDependency) differenceList.get(i).getRefNew();
+						//check if its relevant for this transition
+						boolean relevant = false;
+						boolean relevant1 = false;//check if on fdep event list
+						boolean relevant2 = false;//check if trans in contains the trigger
+						for (int l = 1; l < tmp1.getEvents().size(); l++) {
+							if (tmp1.getEvents().get(l).getName().compareTo(ctmc.getStates().get(j).getOut().get(k).getName()) == 0) {
+								relevant1 = true;
+								break;
+							}
+						}
+						for (int l = 0; l < ctmc.getStates().get(j).getIn().size(); l++) {
+							if (ctmc.getStates().get(j).getIn().get(l).getName().compareTo(tmp1.getEvents().get(0).getName()) == 0) {
+								relevant2 = true;
+								break;
+							}
+						}
+						if (relevant1 == true && relevant2 == true) {
+							relevant = true;
+							System.out.println("this case is relevant");
+						}
+						if (relevant) {
+							//check which index of transitions with this label in this state this transition has
+						    /*int tIndex = 0;
+						    for (int l = 0; l < ctmc.getStates().get(j).getOut().size(); l++) {
+							    if (ctmc.getStates().get(j).getOut().get(l).getName().compareTo(ctmc.getStates().get(j).getOut().get(k).getName()) == 0) {
+								    if (ctmc.getStates().get(j).getOut().get(l) == ctmc.getStates().get(j).getOut().get(k)) {
+									    break;
+								    }
+								    tIndex++;
+							    }
+						    }
+						    System.out.println("transiton index of " + ctmc.getStates().get(j).getOut().get(k).getName() + " is : " + tIndex);
+						    //check indexof the current fdep
+							int fDepIndex = 1;
+							for (int l = 0; l < fDepList.size(); l++) {
+								if (fDepList.get(l) == tmp1) {
+									break;
+								}
+								for (int l2 = 1; l2 < fDepList.get(l).getEvents().size(); l2++) {
+									if (fDepList.get(l).getEvents().get(l2).getName().compareTo(ctmc.getStates().get(j).getOut().get(k).getName()) == 0) {
+										fDepIndex++;
+										break;
+									}
+								}
+							}
+							System.out.println("fdep index of " + tmp1.getName() + " is: " + fDepIndex);
+							if (tIndex == fDepIndex) {
+								ctmc.getStates().get(j).getOut().get(k).setProbability(tmp1.getProbability());
+								System.out.println("set new probability " + ctmc.getStates().get(j).getOut().get(k).getProbability() + " for " + ctmc.getStates().get(j).getOut().get(k).getName());
+							}*/
+							System.out.println(ctmc.getStates().get(j).getOut().get(k).getProbability());
+							System.out.println(differenceList.get(i).getRefOld().getProbability());
+							if (ctmc.getStates().get(j).getOut().get(k).getProbability() == differenceList.get(i).getRefOld().getProbability()) {
+								System.out.println("yeet?");
+								ctmc.getStates().get(j).getOut().get(k).setProbability(tmp1.getProbability());
+								//push it to the end of the list, so we know the last transitions are fdep transitions
+								ctmc.getStates().get(j).getOut().move(ctmc.getStates().get(j).getOut().size()-1, ctmc.getStates().get(j).getOut().get(k));
+								System.out.println("set new probability " + ctmc.getStates().get(j).getOut().get(k).getProbability() + " for " + ctmc.getStates().get(j).getOut().get(k).getName());
+								continue states;
+							}
+						}
+						
+						break;
+					}
+				}
+			}
+			//differenceList.removeFirst();
 		}
+		
+		//version 2
+		/*for (int i = 0; i < ctmc.getStates().size(); i++) { 
+			//mark which probability changes through fdeps  are already done for each state
+			boolean[] done = new boolean[prioOne];
+			
+			//check all  transitions
+			for (int j = 0; j < ctmc.getStates().get(i).getOut().size(); j++) {
+				//go through every possible change
+				for (int k = 0; k < prioOne; k++) {
+					//check which difference needs to be checked
+					if (done[k] == false) {
+						//check if it applies to the current transition 
+						int tmp = differenceList.get(k).getDifference();
+						 switch (tmp) {
+						case 1: // change name
+							if (differenceList.get(k).getRefOld().getName().compareTo(ctmc.getStates().get(i).getOut().get(j).getName()) == 0) {
+								ctmc.getStates().get(i).getOut().get(j).setName(differenceList.get(k).getRefNew().getName());
+								System.out.println("set new name: " + ctmc.getStates().get(i).getOut().get(j).getName());
+								//done[k] = true;
+							}
+							
+							break;
+
+						case 2: // change probability
+							//check if the name of the transition matches, then if the prob matches
+							if (differenceList.get(k).getRefNew().getName().compareTo(ctmc.getStates().get(i).getOut().get(j).getName()) == 0
+									&& differenceList.get(k).getRefOld().getProbability() == ctmc.getStates().get(i).getOut().get(j).getProbability()) {
+								ctmc.getStates().get(i).getOut().get(j).setProbability(differenceList.get(k).getRefNew().getProbability());
+								System.out.println("set new probibility: " + ctmc.getStates().get(i).getOut().get(j).getProbability());
+								//done[k] = true;
+							}
+							
+							break;
+						
+						case 24: //change fdep probability
+							FunctionalDependency tmp1 = (FunctionalDependency) differenceList.get(k).getRefNew();
+							for (int l = 0; l < tmp1.getEvents().size(); l++) {
+								if (tmp1.getEvents().get(l).getName().compareTo(ctmc.getStates().get(i).getOut().get(j).getName()) == 0 &&
+										tmp1.getProbability() == ctmc.getStates().get(i).getOut().get(j).getProbability()) {
+									//check if thats the right transition
+									for (int m = 0; m < ctmc.getStates().get(i).getOut().size(); m++) {
+										if (ctmc.getStates().get(i).getOut().get(m).getName().compareTo(ctmc.getStates().get(i).getOut().get(j).getName()) == 0 && m < j) {
+											ctmc.getStates().get(i).getOut().get(j).setProbability(tmp1.getProbability());
+											done[k] = true;
+										}
+									}
+								}
+							}
+							
+							break;
+						}
+					}else {
+						break;
+					}
+				}
+			}
+		}*/
 		
 		//TODO working with a transition list, delete or use later
 		/*

@@ -29,9 +29,12 @@ public class testLoader {
 
 	public static void main(String[] args) {
 		
-		String tmp ="File:/home/rob/runtime-EclipseApplication/TestModels/2.Label update/LabelTest.dynamicfaulttree";
+		String tmp ="File:/home/rob/runtime-EclipseApplication/TestModels/3. Label fprobability/Fprob.dynamicfaulttree";
 		URI testDFT_URI = URI.createURI(tmp);
-		String uri = "/home/rob/runtime-EclipseApplication/TestModels/2.Label update/LabelTest.ctmc";
+		String uri = "/home/rob/runtime-EclipseApplication/TestModels/3. Label fprobability/Fprob.ctmc";
+		
+		//where to save the transformation data
+		String folderPath = "/home/rob/runtime-EclipseApplication/TestModels/3. Label fprobability/";
 		
 		
 		DFT dft;
@@ -77,7 +80,7 @@ public class testLoader {
 		
 		
 		//testing preserving data for incremental transformation/update
-		String folderPath = "/home/rob/runtime-EclipseApplication/TestModels/2.Label update/";
+		//folder path at the top
 		String folderName = dft.getName() + " Data";
 		dftToCdmc.saveTransformationData(folderPath, folderName, dft);
 		System.out.println("made a new folder at " + folderPath+folderName);

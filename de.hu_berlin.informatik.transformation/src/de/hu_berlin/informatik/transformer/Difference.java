@@ -2,7 +2,6 @@ package de.hu_berlin.informatik.transformer;
 
 import de.hu_berlin.informatik.dynamicFaultTree.Element;
 
-//TODO work in progress
 public class Difference {
 	
 	private int priority; //what to apply first

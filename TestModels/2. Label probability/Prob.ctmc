@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ASCII"?>
+<ctmc:CTMC xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ctmc="http://www.example.org/ctmc" name="Prob">
+  <states name="0">
+    <labels text="Start"/>
+    <out name="b" probability="0.2" duration="1.0" to="//@states.1"/>
+    <out name="a" probability="0.1" duration="1.0" to="//@states.2"/>
+  </states>
+  <states name="1" in="//@states.0/@out.0">
+    <out name="a" probability="0.1" duration="1.0" to="//@states.3"/>
+  </states>
+  <states name="2" in="//@states.0/@out.1">
+    <out name="b" probability="0.2" duration="1.0" to="//@states.3"/>
+  </states>
+  <states name="3" in="//@states.1/@out.0 //@states.2/@out.0">
+    <labels text="System failed"/>
+  </states>
+</ctmc:CTMC>

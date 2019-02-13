@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ASCII"?>
+<dynamicFaultTree:DFT xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dynamicFaultTree="http://www.example.org/dynamicFaultTree" name="Test">
+  <topLevelEvent name="Duplicate">
+    <gate xsi:type="dynamicFaultTree:OR" name="A" elementID="1">
+      <childGate xsi:type="dynamicFaultTree:AND" name="B" elementID="2">
+        <childEvent name="a" elementID="4"/>
+        <childEvent name="b" elementID="5"/>
+      </childGate>
+      <childGate xsi:type="dynamicFaultTree:AND" name="C" elementID="3">
+        <childEvent name="a" elementID="6"/>
+        <childEvent name="c" elementID="7"/>
+      </childGate>
+    </gate>
+  </topLevelEvent>
+</dynamicFaultTree:DFT>

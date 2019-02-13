@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dynamicFaultTree:DFT xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dynamicFaultTree="http://www.example.org/dynamicFaultTree" name="Fp">
+  <topLevelEvent name="fp">
+    <gate xsi:type="dynamicFaultTree:AND" name="A" elementID="1">
+      <childEvent name="x" probability="0.11" elementID="2" dependency="//@dependencies.0"/>
+      <childEvent name="b" probability="0.2" sequencePosition="1" elementID="3" dependency="//@dependencies.0 //@dependencies.1"/>
+      <childEvent name="c" probability="0.3" sequencePosition="2" elementID="4" dependency="//@dependencies.1"/>
+    </gate>
+  </topLevelEvent>
+  <dependencies xsi:type="dynamicFaultTree:FunctionalDependency" name="1" probability="0.4" elementID="5" events="//@topLevelEvent/@gate/@childEvent.0 //@topLevelEvent/@gate/@childEvent.1"/>
+  <dependencies xsi:type="dynamicFaultTree:FunctionalDependency" name="2" probability="0.5" elementID="6" events="//@topLevelEvent/@gate/@childEvent.2 //@topLevelEvent/@gate/@childEvent.1"/>
+</dynamicFaultTree:DFT>

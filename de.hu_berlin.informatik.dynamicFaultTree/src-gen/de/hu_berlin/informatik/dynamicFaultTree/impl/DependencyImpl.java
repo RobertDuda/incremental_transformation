@@ -66,7 +66,7 @@ public abstract class DependencyImpl extends ElementImpl implements Dependency {
 	@Override
 	public EList<Event> getEvents() {
 		if (events == null) {
-			events = new EObjectWithInverseResolvingEList<Event>(Event.class, this,
+			events = new EObjectWithInverseResolvingEList.ManyInverse<Event>(Event.class, this,
 					DynamicFaultTreePackage.DEPENDENCY__EVENTS, DynamicFaultTreePackage.EVENT__DEPENDENCY);
 		}
 		return events;

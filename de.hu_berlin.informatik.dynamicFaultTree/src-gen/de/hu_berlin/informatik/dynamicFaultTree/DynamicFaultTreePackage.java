@@ -405,7 +405,7 @@ public interface DynamicFaultTreePackage extends EPackage {
 	int EVENT__PARENT_GATE = ELEMENT_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Dependency</b></em>' reference.
+	 * The feature id for the '<em><b>Dependency</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1453,10 +1453,10 @@ public interface DynamicFaultTreePackage extends EPackage {
 	EReference getEvent_ParentGate();
 
 	/**
-	 * Returns the meta object for the reference '{@link de.hu_berlin.informatik.dynamicFaultTree.Event#getDependency <em>Dependency</em>}'.
+	 * Returns the meta object for the reference list '{@link de.hu_berlin.informatik.dynamicFaultTree.Event#getDependency <em>Dependency</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Dependency</em>'.
+	 * @return the meta object for the reference list '<em>Dependency</em>'.
 	 * @see de.hu_berlin.informatik.dynamicFaultTree.Event#getDependency()
 	 * @see #getEvent()
 	 * @generated
@@ -1753,7 +1753,7 @@ public interface DynamicFaultTreePackage extends EPackage {
 		EReference EVENT__PARENT_GATE = eINSTANCE.getEvent_ParentGate();
 
 		/**
-		 * The meta object literal for the '<em><b>Dependency</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Dependency</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

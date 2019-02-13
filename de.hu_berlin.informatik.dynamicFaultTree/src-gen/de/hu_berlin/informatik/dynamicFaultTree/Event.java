@@ -2,6 +2,8 @@
  */
 package de.hu_berlin.informatik.dynamicFaultTree;
 
+import org.eclipse.emf.common.util.EList;
+
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Event</b></em>'.
@@ -49,7 +51,8 @@ public interface Event extends Element {
 	void setParentGate(Gate value);
 
 	/**
-	 * Returns the value of the '<em><b>Dependency</b></em>' reference.
+	 * Returns the value of the '<em><b>Dependency</b></em>' reference list.
+	 * The list contents are of type {@link de.hu_berlin.informatik.dynamicFaultTree.Dependency}.
 	 * It is bidirectional and its opposite is '{@link de.hu_berlin.informatik.dynamicFaultTree.Dependency#getEvents <em>Events</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -57,23 +60,12 @@ public interface Event extends Element {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Dependency</em>' reference.
-	 * @see #setDependency(Dependency)
+	 * @return the value of the '<em>Dependency</em>' reference list.
 	 * @see de.hu_berlin.informatik.dynamicFaultTree.DynamicFaultTreePackage#getEvent_Dependency()
 	 * @see de.hu_berlin.informatik.dynamicFaultTree.Dependency#getEvents
 	 * @model opposite="events"
 	 * @generated
 	 */
-	Dependency getDependency();
-
-	/**
-	 * Sets the value of the '{@link de.hu_berlin.informatik.dynamicFaultTree.Event#getDependency <em>Dependency</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Dependency</em>' reference.
-	 * @see #getDependency()
-	 * @generated
-	 */
-	void setDependency(Dependency value);
+	EList<Dependency> getDependency();
 
 } // Event

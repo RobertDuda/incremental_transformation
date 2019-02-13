@@ -2589,7 +2589,7 @@ public class Transformer {
 		if (event1.getDependency() != null) {
 			if (event2.getDependency() != null) {
 				//check if the have the same events
-				boolean checkedDep[] = new boolean[event2.getDependency().size]; //mark dep to not check twice
+				boolean checkedDep[] = new boolean[event2.getDependency().size()]; //mark dep to not check twice
 				boolean foundDep[] = new boolean[event1.getDependency().size()]; //mark if dep was found, not found -> new dep
 
 				for (int i = 0; i < event1.getDependency().size(); i++) {

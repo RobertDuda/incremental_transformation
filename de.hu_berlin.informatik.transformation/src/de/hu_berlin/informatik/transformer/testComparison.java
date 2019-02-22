@@ -12,17 +12,35 @@ public class testComparison {
 		 
 		//URIs of models
 		//dft 1, the edited one
-		String tmp1 ="/home/rob/runtime-EclipseApplication/TestModels/4. Catch duplicate/Test.dynamicfaulttree";
+		//String tmp1 ="File://home/rob/runtime-EclipseApplication/Models/5. Add event/AddEvent.dynamicfaulttree";
+		//String tmp1 ="File://home/rob/runtime-EclipseApplication/Models/6. Remove event/RemoveEvent.dynamicfaulttree";
+		//String tmp1 ="File://home/rob/runtime-EclipseApplication/Models/7. Remove and Add events/Both.dynamicfaulttree";
+		//String tmp1 ="File://home/rob/runtime-EclipseApplication/Models/8. Add gate/Gate.dynamicfaulttree";
+		String tmp1 ="File://home/rob/runtime-EclipseApplication/Models/9. Remove gate/GateR.dynamicfaulttree";
 		URI testDFT1_URI = URI.createURI(tmp1);
+		
 		//dft 2, the original
-		//String tmp2 ="File:/home/rob/runtime-EclipseApplication/TestModels/Test.dynamicfaulttree";
-		String tmp2 ="File:/home/rob/runtime-EclipseApplication/TestModels/4. Catch duplicate/Test Data/TestOld.dynamicfaulttree";
+		//String tmp2 ="File://home/rob/runtime-EclipseApplication/Models/5. Add event/AddEvent Data/AddEventOld.dynamicfaulttree";
+		//String tmp2 ="File://home/rob/runtime-EclipseApplication/Models/6. Remove event/RemoveEvent Data/RemoveEventOld.dynamicfaulttree";
+		//String tmp2 ="File://home/rob/runtime-EclipseApplication/Models/7. Remove and Add events/Both Data/BothOld.dynamicfaulttree";
+		//String tmp2 ="File://home/rob/runtime-EclipseApplication/Models/8. Add gate/Gate Data/GateOld.dynamicfaulttree";
+		String tmp2 ="File://home/rob/runtime-EclipseApplication/Models/9. Remove gate/GateR Data/GateROld.dynamicfaulttree";
 		URI testDFT2_URI = URI.createURI(tmp2);
 		
 		//ctmc 1
-		String tmp3 ="File:/home/rob/runtime-EclipseApplication/TestModels/4. Catch duplicate/Test.ctmc";
+		//String tmp3 ="File://home/rob/runtime-EclipseApplication/Models/5. Add event/AddEvent.ctmc";
+		//String tmp3 ="File://home/rob/runtime-EclipseApplication/Models/6. Remove event/RemoveEvent.ctmc";
+		//String tmp3 ="File://home/rob/runtime-EclipseApplication/Models/7. Remove and Add events/Both.ctmc";
+		//String tmp3 ="File://home/rob/runtime-EclipseApplication/Models/8. Add gate/Gate.ctmc";
+		String tmp3 ="File://home/rob/runtime-EclipseApplication/Models/9. Remove gate/GateR.ctmc";
 		URI testCTMC_URI = URI.createURI(tmp3);
 		
+		//load states.txt
+		//String oldStates = "/home/rob/runtime-EclipseApplication/Models/5. Add event/AddEvent Data//States.txt";
+		//String oldStates = "/home/rob/runtime-EclipseApplication/Models/6. Remove event/RemoveEvent Data/States.txt";
+		//String oldStates = "/home/rob/runtime-EclipseApplication/Models/7. Remove and Add events/Both Data/States.txt";
+		//String oldStates = "/home/rob/runtime-EclipseApplication/Models/8. Add gate/Gate Data/States.txt";
+		String oldStates = "/home/rob/runtime-EclipseApplication/Models/9. Remove gate/GateR Data/States.txt";
 		
 		//loading the models
 		//dft 1
@@ -149,7 +167,7 @@ public class testComparison {
 		System.out.println("comparison end\n");
 		
 		//load old states
-		/*String oldStates = "/home/rob/runtime-EclipseApplication/TestModels/1.Label update/Label Data/States.txt";
+		//String oldStates = "//home/rob/runtime-EclipseApplication/Models/6. Remove event/RemoveEvent Data/States.txt";
 		System.out.println("loading states of " + ctmc1.getName() + "...");
 		trans.loadOldStates(oldStates);
 		for (int i = 0; i < trans.getOldStateList().size(); i++) {
@@ -158,7 +176,6 @@ public class testComparison {
 			}
 			System.out.println("");
 		}
-		*/
 		//load old states end
 		
 		//incremental transformation
@@ -171,7 +188,7 @@ public class testComparison {
 		}*/
 		
 		//output to check changes
-		for (int i = 0; i < ctmc1.getStates().size(); i++) {
+		/*for (int i = 0; i < ctmc1.getStates().size(); i++) {
 			System.out.println(ctmc1.getStates().get(i).getName());
 			if (!ctmc1.getStates().get(i).getOut().isEmpty()) {
 				for (int j = 0; j < ctmc1.getStates().get(i).getOut().size(); j++) {
@@ -185,6 +202,14 @@ public class testComparison {
 					System.out.println("has label " + ctmc1.getStates().get(i).getLabels().get(j).getText());
 				}
 			}
+		}*/
+		
+		//check state changes
+		for (int i = 0; i < trans.getStateList().size(); i++) {
+			for (int j = 0; j < trans.getStateList().get(i).length; j++) {
+				System.out.print(trans.getStateList().get(i)[j]);
+			}
+			System.out.println("");
 		}
 		
 		//test end

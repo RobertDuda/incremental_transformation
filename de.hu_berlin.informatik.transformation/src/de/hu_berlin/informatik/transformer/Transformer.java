@@ -14,8 +14,12 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.lang.annotation.Repeatable;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -213,6 +217,10 @@ public class Transformer {
 		return oldStateList;
 	}
 
+	public void setStateList(LinkedList<int[]> stateList) {
+		this.stateList = stateList;
+	}
+	
 	public void setOldStateList(LinkedList<int[]> oldStateList) {
 		this.oldStateList = oldStateList;
 	}
@@ -1649,7 +1657,7 @@ public class Transformer {
 			System.out.println("TLE names are different: " + dft.getTopLevelEvent().getName() + " vs " + oldDFT.getTopLevelEvent().getName());
 			//TLE names
 			Difference diff = new Difference();
-			diff.setPriority(2);
+			diff.setPriority(3);
 			diff.setRefNew(dft.getTopLevelEvent());
 			diff.setRefOld(oldDFT.getTopLevelEvent());
 			diff.setType("TLE names");
@@ -1694,7 +1702,7 @@ public class Transformer {
 				System.out.println("New gate: " + gateList.get(i).getName() + ", " + gateList.get(i).getElementID());
 				//new gate
 				Difference diff = new Difference();
-				diff.setPriority(3);
+				diff.setPriority(5);
 				diff.setRefNew(gateList.get(i));
 				diff.setRefOld(null);
 				diff.setType("add gate");
@@ -1718,11 +1726,11 @@ public class Transformer {
 				System.out.println("Removed gate: " + oldGateList.get(i).getElementID() + ", " + oldGateList.get(i).getName());
 				//remove gate
 				Difference diff = new Difference();
-				diff.setPriority(3);
+				diff.setPriority(4);
 				diff.setRefNew(null);
 				diff.setRefOld(oldGateList.get(i));
 				diff.setType("remove gate");
-				diff.setDifference(17); //new gate
+				diff.setDifference(17); //removed gate
 				//sort into list
 				int k;
 				for(k = 0; k < differenceList.size(); k++) {
@@ -1743,12 +1751,12 @@ public class Transformer {
 		boolean foundEvents[] = new boolean[eventList.size()]; //mark if it's a new or old event
 		
 		for(int i = 0; i < eventList.size(); i++) {
-			System.out.println(eventList.get(i));
+			//System.out.println(eventList.get(i));
 			for(int j = 0; j < oldEventList.size(); j++) {
-				System.out.println(oldEventList.get(j));
+				//System.out.println(oldEventList.get(j));
 				if (eventList.get(i).getElementID() == oldEventList.get(j).getElementID()) {
-					System.out.println(eventList.get(i).getName());
-					System.out.println(oldEventList.get(j).getName());
+					//System.out.println(eventList.get(i).getName());
+					//System.out.println(oldEventList.get(j).getName());
 					checkedEvents[j] = true;
 					foundEvents[i] = true;
 					System.out.println("Comparing events " + eventList.get(i).getName() + " and " + oldEventList.get(j).getName() + "...");
@@ -1763,7 +1771,7 @@ public class Transformer {
 				diff.setRefNew(eventList.get(i));
 				diff.setRefOld(null);
 				diff.setType("add event");
-				diff.setDifference(18); //new gate
+				diff.setDifference(18); //add event
 				//sort into list
 				int k;
 				for(k = 0; k < differenceList.size(); k++) {
@@ -1783,11 +1791,11 @@ public class Transformer {
 				System.out.println("Removed event: " + oldEventList.get(i).getElementID() + ", " + oldEventList.get(i).getName());
 				//remove event
 				Difference diff = new Difference();
-				diff.setPriority(3);
+				diff.setPriority(2);
 				diff.setRefNew(null);
 				diff.setRefOld(oldEventList.get(i));
 				diff.setType("remove event");
-				diff.setDifference(19); //new event
+				diff.setDifference(19); //remove event
 				//sort into list
 				int k;
 				for(k = 0; k < differenceList.size(); k++) {
@@ -1820,7 +1828,7 @@ public class Transformer {
 				System.out.println("New dependency: " + dependencyList.get(i).getName() + ", " + dependencyList.get(i).getElementID());
 				//add dep
 				Difference diff = new Difference();
-				diff.setPriority(2);
+				diff.setPriority(4);
 				diff.setRefNew(dependencyList.get(i));
 				diff.setRefOld(null);
 				diff.setType("add dependency");
@@ -1844,7 +1852,7 @@ public class Transformer {
 				System.out.println("Removed dependency: " + oldDependencyList.get(i).getElementID() + ", " + oldDependencyList.get(i).getName());
 				//remove dep
 				Difference diff = new Difference();
-				diff.setPriority(2);
+				diff.setPriority(4);
 				diff.setRefNew(null);
 				diff.setRefOld(oldDependencyList.get(i));
 				diff.setType("remove dependency");
@@ -1905,7 +1913,7 @@ public class Transformer {
 			System.out.println("Gate types are different: " + gate1.eClass().getName() +" vs " + gate2.eClass().getName());
 			//update gate logic
 			Difference diff = new Difference();
-			diff.setPriority(2);
+			diff.setPriority(6);
 			diff.setRefNew(gate1);
 			diff.setRefOld(gate2);
 			diff.setType("update gate logic");
@@ -1930,7 +1938,7 @@ public class Transformer {
 			System.out.println("Gate sequence positions are different: " + gate1.getSequencePosition() + " vs " + gate2.getSequencePosition());
 			//update gate logic
 			Difference diff = new Difference();
-			diff.setPriority(2);
+			diff.setPriority(6);
 			diff.setRefNew(gate1);
 			diff.setRefOld(gate2);
 			diff.setType("update gate logic");
@@ -1963,7 +1971,7 @@ public class Transformer {
 				System.out.println("Parents are different: " + gate1.getParentGate().getName() + ", " + gate1.getParentGate().getElementID() + " vs " + gate2.getParentGate().getName() + ", " + gate2.getParentGate().getElementID());
 				//update gate logic
 				Difference diff = new Difference();
-				diff.setPriority(2);
+				diff.setPriority(6);
 				diff.setRefNew(gate1);
 				diff.setRefOld(gate2);
 				diff.setType("update gate logic");
@@ -2002,7 +2010,7 @@ public class Transformer {
 				System.out.println("New child gate: " + gate1.getChildGate().get(i).getName());
 				//update gate logic
 				Difference diff = new Difference();
-				diff.setPriority(2);
+				diff.setPriority(6);
 				diff.setRefNew(gate1);
 				diff.setRefOld(gate2);
 				diff.setType("update gate logic");
@@ -2027,7 +2035,7 @@ public class Transformer {
 				System.out.println("Removed child gate: " + gate2.getChildGate().get(i).getName());
 				//update gate logic
 				Difference diff = new Difference();
-				diff.setPriority(2);
+				diff.setPriority(6);
 				diff.setRefNew(gate1);
 				diff.setRefOld(gate2);
 				diff.setType("update gate logic");
@@ -2063,7 +2071,7 @@ public class Transformer {
 				System.out.println("New child event: " + gate1.getChildEvent().get(i).getName());
 				//update gate logic
 				Difference diff = new Difference();
-				diff.setPriority(2);
+				diff.setPriority(6);
 				diff.setRefNew(gate1);
 				diff.setRefOld(gate2);
 				diff.setType("update gate logic");
@@ -2088,7 +2096,7 @@ public class Transformer {
 				System.out.println("Removed child event: " + gate2.getChildEvent().get(i).getName());
 				//update gate logic
 				Difference diff = new Difference();
-				diff.setPriority(2);
+				diff.setPriority(6);
 				diff.setRefNew(gate1);
 				diff.setRefOld(gate2);
 				diff.setType("update gate logic");
@@ -2135,7 +2143,7 @@ public class Transformer {
 						System.out.println("New spare: " + tmp1.getSpares().get(i).getName());
 						//update gate logic
 						Difference diff = new Difference();
-						diff.setPriority(2);
+						diff.setPriority(6);
 						diff.setRefNew(gate1);
 						diff.setRefOld(gate2);
 						diff.setType("update gate logic");
@@ -2160,7 +2168,7 @@ public class Transformer {
 						System.out.println("Removed spare: " + tmp2.getSpares().get(i).getName());
 						//update gate logic
 						Difference diff = new Difference();
-						diff.setPriority(2);
+						diff.setPriority(6);
 						diff.setRefNew(gate1);
 						diff.setRefOld(gate2);
 						diff.setType("update gate logic");
@@ -2184,7 +2192,7 @@ public class Transformer {
 				//same as gate type, redundant?
 				//update gate logic
 				Difference diff = new Difference();
-				diff.setPriority(2);
+				diff.setPriority(6);
 				diff.setRefNew(gate1);
 				diff.setRefOld(gate2);
 				diff.setType("update gate logic");
@@ -2207,7 +2215,7 @@ public class Transformer {
 				System.out.println(gate1.getName() + " is no longer a Spare gate");
 				//update gate logic
 				Difference diff = new Difference();
-				diff.setPriority(2);
+				diff.setPriority(6);
 				diff.setRefNew(gate1);
 				diff.setRefOld(gate2);
 				diff.setType("update gate logic");
@@ -2274,7 +2282,7 @@ public class Transformer {
 			
 			//update gate logic
 			Difference diff = new Difference();
-			diff.setPriority(2);
+			diff.setPriority(6);
 			diff.setRefNew(event1);
 			diff.setRefOld(event2);
 			diff.setType("update gate logic");
@@ -2328,7 +2336,7 @@ public class Transformer {
 			
 			//update gate logic
 			Difference diff = new Difference();
-			diff.setPriority(2);
+			diff.setPriority(6);
 			diff.setRefNew(event1);
 			diff.setRefOld(event2);
 			diff.setType("update gate logic");
@@ -2362,7 +2370,7 @@ public class Transformer {
 					switch (type1+type2) {
 					case "SequenceSequence": //update gate logic
 						//update gate logic
-						diff.setPriority(2);
+						diff.setPriority(3);
 						diff.setRefNew(event1);
 						diff.setRefOld(event2);
 						diff.setType("update gate logic");
@@ -2382,7 +2390,7 @@ public class Transformer {
 
 					case "SequenceFunctionalDependency": //remove trans + update g logic
 						//update gate logic
-						diff.setPriority(2);
+						diff.setPriority(3);
 						diff.setRefNew(event1);
 						diff.setRefOld(event2);
 						diff.setType("update gate logic");
@@ -2399,7 +2407,7 @@ public class Transformer {
 						}
 						System.out.println("Created: " + diff);
 						//remove trans
-						diff.setPriority(2);
+						diff.setPriority(3);
 						diff.setRefNew(event1);
 						diff.setRefOld(event2);
 						diff.setType("remove transitions");
@@ -2419,7 +2427,7 @@ public class Transformer {
 						
 					case "FunctionalDependencySequence": //add trans + update g logic
 						//add trans
-						diff.setPriority(2);
+						diff.setPriority(3);
 						diff.setRefNew(event1);
 						diff.setRefOld(event2);
 						diff.setType("add transitions");
@@ -2436,7 +2444,7 @@ public class Transformer {
 						}
 						System.out.println("Created: " + diff);
 						//update gate logic
-						diff.setPriority(2);
+						diff.setPriority(3);
 						diff.setRefNew(event1);
 						diff.setRefOld(event2);
 						diff.setType("update gate logic");
@@ -2456,7 +2464,7 @@ public class Transformer {
 					
 					case "FunctionalDependencyFunctionalDependency": //remove + add transitions
 						//add transitions
-						diff.setPriority(2);
+						diff.setPriority(3);
 						diff.setRefNew(event1);
 						diff.setRefOld(event2);
 						diff.setType("add transitions");
@@ -2472,7 +2480,7 @@ public class Transformer {
 						}
 						System.out.println("Created: " + diff);
 						//remove transitions
-						diff.setPriority(2);
+						diff.setPriority(3);
 						diff.setRefNew(event1);
 						diff.setRefOld(event2);
 						diff.setType("remove transitions");
@@ -2497,7 +2505,7 @@ public class Transformer {
 				if (event1.getDependency().eClass().getName() == "Sequence") {
 					//update gate logic
 					Difference diff = new Difference();
-					diff.setPriority(2);
+					diff.setPriority(3);
 					diff.setRefNew(event1);
 					diff.setRefOld(event2);
 					diff.setType("update gate logic");
@@ -2517,7 +2525,7 @@ public class Transformer {
 				}else { //functional dependency
 					//add transitions
 					Difference diff = new Difference();
-					diff.setPriority(2);
+					diff.setPriority(3);
 					diff.setRefNew(event1);
 					diff.setRefOld(event2);
 					diff.setType("add transitions");
@@ -2541,7 +2549,7 @@ public class Transformer {
 				if (event2.getDependency().eClass().getName() == "Sequence") {
 					//update gate logic
 					Difference diff = new Difference();
-					diff.setPriority(2);
+					diff.setPriority(3);
 					diff.setRefNew(event1);
 					diff.setRefOld(event2);
 					diff.setType("update gate logic");
@@ -2561,7 +2569,7 @@ public class Transformer {
 				}else { //functional dependency
 					//remove transitions
 					Difference diff = new Difference();
-					diff.setPriority(2);
+					diff.setPriority(3);
 					diff.setRefNew(event1);
 					diff.setRefOld(event2);
 					diff.setType("remove transitions");
@@ -2644,7 +2652,7 @@ public class Transformer {
 			System.out.println("Dependency names are different: " + dep1.getElementID() + " vs " + dep2.getElementID());
 			//TODO relevant???
 			Difference diff = new Difference();
-			diff.setPriority(2);
+			diff.setPriority(6);
 			diff.setRefNew(dep1);
 			diff.setRefOld(dep2);
 			diff.setType("update label");
@@ -2680,7 +2688,7 @@ public class Transformer {
 				System.out.println("New event: " + dep1.getEvents().get(i).getName());
 				//update gate logic
 				Difference diff = new Difference();
-				diff.setPriority(2);
+				diff.setPriority(6);
 				diff.setRefNew(dep1);
 				diff.setRefOld(dep2);
 				diff.setType("update gate logic");
@@ -2705,7 +2713,7 @@ public class Transformer {
 				System.out.println("Removed event: " + dep2.getEvents().get(i).getName());
 				//update gate logic
 				Difference diff = new Difference();
-				diff.setPriority(2);
+				diff.setPriority(6);
 				diff.setRefNew(dep1);
 				diff.setRefOld(dep2);
 				diff.setType("update gate logic");
@@ -2825,7 +2833,7 @@ public class Transformer {
 				break;
 			}
 		}
-		System.out.println("nr of priority 1 differences: " + prioOne);
+		//System.out.println("nr of priority 1 differences: " + prioOne);
 		
 		
 		//1. label update
@@ -3012,98 +3020,163 @@ public class Transformer {
 			//differenceList.removeFirst();
 		}
 		
-		//version 2
-		/*for (int i = 0; i < ctmc.getStates().size(); i++) { 
-			//mark which probability changes through fdeps  are already done for each state
-			boolean[] done = new boolean[prioOne];
-			
-			//check all  transitions
-			for (int j = 0; j < ctmc.getStates().get(i).getOut().size(); j++) {
-				//go through every possible change
-				for (int k = 0; k < prioOne; k++) {
-					//check which difference needs to be checked
-					if (done[k] == false) {
-						//check if it applies to the current transition 
-						int tmp = differenceList.get(k).getDifference();
-						 switch (tmp) {
-						case 1: // change name
-							if (differenceList.get(k).getRefOld().getName().compareTo(ctmc.getStates().get(i).getOut().get(j).getName()) == 0) {
-								ctmc.getStates().get(i).getOut().get(j).setName(differenceList.get(k).getRefNew().getName());
-								System.out.println("set new name: " + ctmc.getStates().get(i).getOut().get(j).getName());
-								//done[k] = true;
-							}
-							
-							break;
-
-						case 2: // change probability
-							//check if the name of the transition matches, then if the prob matches
-							if (differenceList.get(k).getRefNew().getName().compareTo(ctmc.getStates().get(i).getOut().get(j).getName()) == 0
-									&& differenceList.get(k).getRefOld().getProbability() == ctmc.getStates().get(i).getOut().get(j).getProbability()) {
-								ctmc.getStates().get(i).getOut().get(j).setProbability(differenceList.get(k).getRefNew().getProbability());
-								System.out.println("set new probibility: " + ctmc.getStates().get(i).getOut().get(j).getProbability());
-								//done[k] = true;
-							}
-							
-							break;
-						
-						case 24: //change fdep probability
-							FunctionalDependency tmp1 = (FunctionalDependency) differenceList.get(k).getRefNew();
-							for (int l = 0; l < tmp1.getEvents().size(); l++) {
-								if (tmp1.getEvents().get(l).getName().compareTo(ctmc.getStates().get(i).getOut().get(j).getName()) == 0 &&
-										tmp1.getProbability() == ctmc.getStates().get(i).getOut().get(j).getProbability()) {
-									//check if thats the right transition
-									for (int m = 0; m < ctmc.getStates().get(i).getOut().size(); m++) {
-										if (ctmc.getStates().get(i).getOut().get(m).getName().compareTo(ctmc.getStates().get(i).getOut().get(j).getName()) == 0 && m < j) {
-											ctmc.getStates().get(i).getOut().get(j).setProbability(tmp1.getProbability());
-											done[k] = true;
-										}
-									}
-								}
-							}
-							
-							break;
-						}
-					}else {
-						break;
-					}
-				}
-			}
-		}*/
-		
-		//TODO working with a transition list, delete or use later
-		/*
-		for (int i = 0; i < oldTransitionList.size(); i++) {
-			
-			boolean alreadySet[] = new boolean[eventList.size()]; //in case there is a functional dependency and both transitions have the same probability
-		
-			for (int j = 0; j < differenceList.size(); j++) {
-				if (differenceList.get(j).getPriority() == 1) { //updating labels
-					String difference = differenceList.get(j).getType();
-					switch (difference) {
-					case "update name":
-						System.out.println(1);
-						if (oldTransitionList.get(i).getName().compareTo(differenceList.get(j).getRefOld().getName()) == 0) {
-							oldTransitionList.get(i).setName(differenceList.get(j).getRefNew().getName());
-						}
-						
-						break;
-
-					case "update probability":
-						System.out.println(2);
-						//only change prob. if the names and prob. match and it wasn't already set
-						if (oldTransitionList.get(i).getProbability() == differenceList.get(j).getRefOld().getProbability() &&
-								oldTransitionList.get(i).getName().compareTo(differenceList.get(j).getRefNew().getName()) == 0 &&
-								alreadySet[eventList.indexOf(differenceList.get(j).getRefNew())] == false) {
-							oldTransitionList.get(i).setProbability(differenceList.get(j).getRefNew().getProbability());
-							alreadySet[eventList.indexOf(differenceList.get(j).getRefNew())] = true;
-						}
-						break;
-					}
-				}
-			}
-		}*/
-		
+		//remove priority 1 differences, since their changes are now applied
+		while (differenceList.getFirst().getPriority() == 1) {
+			differenceList.removeFirst();
+		}
 		//label update end
+		
+		//set the statesList for the addition and removal of events
+		setStateList(oldStateList);
+		
+
+		//removing states for every removed event
+		for (int i = 0; i < differenceList.size(); i++) {
+			if (differenceList.get(i).getPriority() == 2) {
+				System.out.println("removing states and entries for removed events...");
+				//copy of statelist, cannot iterate over the list while modifying it
+				//LinkedList<int[]> stateListCopy = stateList;
+				
+				//index of the event in the state
+				int eventIndex = oldEventList.indexOf(differenceList.get(i).getRefOld());
+				//remove the event from the list for the next event removal
+				getOldEventList().remove(differenceList.get(i).getRefOld());
+				
+				//System.out.println(oldEventList);
+				
+				//state index to remove from ctmc
+				//int stateIndex = 0;
+				//System.out.println(eventIndex);
+				//new state size
+				int stateSize = stateList.getFirst().length-1;
+				
+				Iterator<int[]> iterator = stateList.iterator();
+				//remove states where the event is 1
+				while(iterator.hasNext()){
+					//if event = 1, remove from state list and ctmc
+					if (iterator.next()[eventIndex] == 1) {
+						//System.out.println("eI = 1");
+						iterator.remove();
+						//TODO remove from ctmc
+					}
+				}
+				//remove the entry from states where event = 0
+				for (int j = 0; j < stateList.size(); j++) {
+					//System.out.println("ei = 0");
+					
+					int[] state = new int[stateSize];
+					System.arraycopy(stateList.get(j), 0, state, 0, eventIndex);
+					System.arraycopy(stateList.get(j), eventIndex+1, state, eventIndex, stateList.get(j).length-1-eventIndex-oldGateList.size());
+					stateList.set(j, state);
+				}
+			}else {
+				break;
+			}
+		}
+		
+		while (differenceList.getFirst().getPriority() == 2) {
+			differenceList.remove();
+		}
+		
+		//adding new events to states 
+		for (int i = 0; i < differenceList.size(); i++) {
+	    	//System.out.println(i);
+	    	if (differenceList.get(i).getPriority() == 3) {
+	    		System.out.println("adding events and states...");
+	    		//put the event to the front of the event list
+	    		//this will make it easier to create new states later
+	    		eventList.remove(differenceList.get(i).getRefNew());
+	    		eventList.addFirst((Event) differenceList.get(i).getRefNew());
+	    		//modify existing states
+	    		//System.out.println(copyLenght);
+				addEvent();
+				//copyLenght++;
+				
+				
+			}else {
+				break;
+			}
+	    
+	    }
+	    
+	    while (differenceList.getFirst().getPriority() == 3) {
+			differenceList.remove();
+		}
+	    
+	    //remove gates
+	    for (int i = 0; i < differenceList.size(); i++) {
+			if (differenceList.get(i).getPriority() == 4) {
+				System.out.println("removing gates...");
+				int stateSize = stateList.getFirst().length;
+				for (int j = 0; j < stateList.size(); j++) {
+					int[] state = new int[stateSize-1];
+					System.arraycopy(stateList.get(j), 0, state, 0, stateSize-1);
+					stateList.set(j, state);
+				}
+			}else {
+				break;
+			}
+		}
+	    
+	    while (differenceList.getFirst().getPriority() == 4) {
+			differenceList.remove();
+		}
+	    
+	    //add gates
+	    for (int i = 0; i < differenceList.size(); i++) {
+			if (differenceList.get(i).getPriority() == 5) {
+				System.out.println("adding gates...");
+				int stateSize = stateList.getFirst().length;
+				for (int j = 0; j < stateList.size(); j++) {
+					int[] state = new int[stateSize+1];
+					System.arraycopy(stateList.get(j), 0, state, 0, stateSize);
+					stateList.set(j, state);
+				}
+			}else {
+				break;
+			}
+		}
+	    
+	    while (differenceList.getFirst().getPriority() == 5) {
+			differenceList.remove();
+		}
+	    
+	    /*for (int i = 0; i < eventList.size(); i++) {
+			System.out.println(eventList.get(i));
+		}*/
+		
+		
+	}
+	
+	public void addEvent() {
+		
+		int copyLenght = oldEventList.size()+1;
+		int stateListSize = stateList.size();
+		int stateSize = stateList.getFirst().length + 1;
+		//System.out.println(copyLenght + ", " +stateListSize + ", " + stateSize);
+	
+		for (int j = 0; j < stateListSize; j++) {
+			//System.out.println(j);
+    		int[] state = new int[stateSize]; // size of state +1 for new event
+    		//System.out.println(stateList.get(j) + " " + state + " " + copyLenght);
+			System.arraycopy(stateList.get(j), 0, state, 1, copyLenght); //copy event values to new state
+			state[0] = 0; //TODO check if default 0
+			//stateList.add(state);
+			stateList.set(j, state);
+			
+		}
+		//copy exisiting states for new event with value 1
+		for (int j = 0; j < stateListSize; j++) {
+			//System.out.println(j);
+    		int[] state = new int[stateSize]; // size of state +1 for new event
+    		System.arraycopy(stateList.get(j), 1, state, 1, copyLenght); //copy event values to new state
+			state[0] = 1;
+			stateList.add(state);
+			//TODO add code to create the state in the ctmc
+			
+		}
+		//System.out.println(eventList);
+		//System.out.println(gateList);
 	}
 	
 }//end transformer

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dynamicFaultTree:DFT xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dynamicFaultTree="http://www.example.org/dynamicFaultTree" name="AddEvent">
+  <topLevelEvent name="Add TLE" elementID="1">
+    <gate xsi:type="dynamicFaultTree:AND" name="A" elementID="2">
+      <childEvent name="a" probability="0.1" elementID="3"/>
+      <childEvent name="b" probability="0.2" sequencePosition="1" elementID="4"/>
+      <childEvent name="c" probability="0.3" sequencePosition="2" elementID="5"/>
+      <childEvent name="d" probability="0.4" sequencePosition="3" elementID="6"/>
+    </gate>
+  </topLevelEvent>
+</dynamicFaultTree:DFT>

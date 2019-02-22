@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ASCII"?>
+<dynamicFaultTree:DFT xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dynamicFaultTree="http://www.example.org/dynamicFaultTree" name="Gate">
+  <topLevelEvent name="Gate">
+    <gate xsi:type="dynamicFaultTree:AND" name="A" elementID="1">
+      <childEvent name="a" elementID="2"/>
+      <childEvent name="b" sequencePosition="1" elementID="4"/>
+    </gate>
+  </topLevelEvent>
+</dynamicFaultTree:DFT>

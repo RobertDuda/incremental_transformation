@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ASCII"?>
+<ctmc:CTMC xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ctmc="http://www.example.org/ctmc" name="RemoveEvent">
+  <states name="0">
+    <labels text="Start"/>
+    <out name="c" duration="1.0" to="//@states.1"/>
+    <out name="b" duration="1.0" to="//@states.2"/>
+    <out name="a" duration="1.0" to="//@states.4"/>
+  </states>
+  <states name="1" in="//@states.0/@out.0">
+    <labels text="System failed"/>
+    <out name="b" duration="1.0" to="//@states.3"/>
+    <out name="a" duration="1.0" to="//@states.5"/>
+  </states>
+  <states name="2" in="//@states.0/@out.1">
+    <labels text="System failed"/>
+    <out name="c" duration="1.0" to="//@states.3"/>
+    <out name="a" duration="1.0" to="//@states.6"/>
+  </states>
+  <states name="3" in="//@states.1/@out.0 //@states.2/@out.0">
+    <labels text="System failed"/>
+    <out name="a" duration="1.0" to="//@states.7"/>
+  </states>
+  <states name="4" in="//@states.0/@out.2">
+    <labels text="System failed"/>
+    <out name="c" duration="1.0" to="//@states.5"/>
+    <out name="b" duration="1.0" to="//@states.6"/>
+  </states>
+  <states name="5" in="//@states.1/@out.1 //@states.4/@out.0">
+    <labels text="System failed"/>
+    <out name="b" duration="1.0" to="//@states.7"/>
+  </states>
+  <states name="6" in="//@states.2/@out.1 //@states.4/@out.1">
+    <labels text="System failed"/>
+    <out name="c" duration="1.0" to="//@states.7"/>
+  </states>
+  <states name="7" in="//@states.3/@out.0 //@states.5/@out.0 //@states.6/@out.0">
+    <labels text="System failed"/>
+  </states>
+</ctmc:CTMC>

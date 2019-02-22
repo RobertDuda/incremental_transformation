@@ -29,13 +29,21 @@ public class testLoader {
 
 	public static void main(String[] args) {
 		
-		String tmp ="File:/home/rob/runtime-EclipseApplication/TestModels/3. Label fprobability/Fprob.dynamicfaulttree";
+		//String tmp = "File:/home/rob/runtime-EclipseApplication/Models/6. Remove event/RemoveEvent.dynamicfaulttree";
+		//String tmp = "File://home/rob/runtime-EclipseApplication/Models/7. Remove and Add events/Both.dynamicfaulttree";
+		//String tmp = "File://home/rob/runtime-EclipseApplication/Models/8. Add gate/Gate.dynamicfaulttree";
+		String tmp = "File://home/rob/runtime-EclipseApplication/Models/9. Remove gate/GateR.dynamicfaulttree";
 		URI testDFT_URI = URI.createURI(tmp);
-		String uri = "/home/rob/runtime-EclipseApplication/TestModels/3. Label fprobability/Fprob.ctmc";
+		
+		//String uri = "/home/rob/runtime-EclipseApplication/Models/6. Remove event/RemoveEvent.ctmc";
+		//String uri = "/home/rob/runtime-EclipseApplication/Models/7. Remove and Add events/Both.ctmc";
+		//String uri = "/home/rob/runtime-EclipseApplication/Models/8. Add gate/Gate.ctmc";
+		String uri = "/home/rob/runtime-EclipseApplication/Models/9. Remove gate/GateR.ctmc";
 		
 		//where to save the transformation data
-		String folderPath = "/home/rob/runtime-EclipseApplication/TestModels/3. Label fprobability/";
-		
+		//String folderPath = "/home/rob/runtime-EclipseApplication/Models/7. Remove and Add events/";
+		//String folderPath = "/home/rob/runtime-EclipseApplication/Models/8. Add gate/";
+		String folderPath = "/home/rob/runtime-EclipseApplication/Models/9. Remove gate/";
 		
 		DFT dft;
 		ModelManager dftManger = new ModelManager(testDFT_URI, "dynamicfaulttree");

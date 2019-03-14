@@ -36,11 +36,14 @@ public class testComparison {
 		URI testCTMC_URI = URI.createURI(tmp3);
 		
 		//load states.txt
-		//String oldStates = "/home/rob/runtime-EclipseApplication/Models/5. Add event/AddEvent Data//States.txt";
-		//String oldStates = "/home/rob/runtime-EclipseApplication/Models/6. Remove event/RemoveEvent Data/States.txt";
-		//String oldStates = "/home/rob/runtime-EclipseApplication/Models/7. Remove and Add events/Both Data/States.txt";
-		//String oldStates = "/home/rob/runtime-EclipseApplication/Models/8. Add gate/Gate Data/States.txt";
-		String oldStates = "/home/rob/runtime-EclipseApplication/Models/9. Remove gate/GateR Data/States.txt";
+		//String oldData = "/home/rob/runtime-EclipseApplication/Models/5. Add event/AddEvent Data/";
+		//String oldData = "/home/rob/runtime-EclipseApplication/Models/6. Remove event/RemoveEvent Data/";
+		//String oldData = "/home/rob/runtime-EclipseApplication/Models/7. Remove and Add events/Both Data/";
+		//String oldData = "/home/rob/runtime-EclipseApplication/Models/8. Add gate/Gate Data/";
+		String oldData = "/home/rob/runtime-EclipseApplication/Models/9. Remove gate/GateR Data/";
+		
+		//where to save the ctmc
+		String newCtmcPath = "File://home/rob/runtime-EclipseApplication/Models/9. Remove gate/newGateR.ctmc";
 		
 		//loading the models
 		//dft 1
@@ -166,21 +169,42 @@ public class testComparison {
 		//comparison end
 		System.out.println("comparison end\n");
 		
-		//load old states
-		//String oldStates = "//home/rob/runtime-EclipseApplication/Models/6. Remove event/RemoveEvent Data/States.txt";
-		System.out.println("loading states of " + ctmc1.getName() + "...");
-		trans.loadOldStates(oldStates);
+		//load old data
+		//file path at the top
+		System.out.println("loading data of ctmc...");
+		trans.loadStatesAndTransitions(oldData);
+		//output states
+		System.out.println("states:");
 		for (int i = 0; i < trans.getOldStateList().size(); i++) {
 			for (int j = 0; j < trans.getOldStateList().get(i).length; j++) {
 				System.out.print(trans.getOldStateList().get(i)[j]);
 			}
 			System.out.println("");
 		}
-		//load old states end
-		
+		/*
+		System.out.println("transitions:");
+		//transitions
+		for (int i = 0; i < trans.getOldTransitionList().size(); i++) {
+			for (int j = 0; j < trans.getOldTransitionList().get(i).length; j++) {
+				System.out.print(trans.getOldTransitionList().get(i)[j]);
+			}
+			System.out.println("");
+		}
+		//fdep transitions
+		if (!trans.getOldFdepTransitionList().isEmpty()) {
+			System.out.println("fdep transitions...");
+			for (int i = 0; i < trans.getOldFdepTransitionList().size(); i++) {
+				for (int j = 0; j < trans.getOldFdepTransitionList().get(i).length; j++) {
+					System.out.print(trans.getOldFdepTransitionList().get(i)[j]);
+				}
+				System.out.println("");
+			}
+		}
+		*/
+
 		//incremental transformation
 		System.out.println("starting incremental transformation...");
-		trans.incrementalTransformation(ctmc1);
+		trans.incrementalTransformation(ctmc1, newCtmcPath);
 		
 		//transition list
 		/*for (int i = 0; i < trans.getOldTransitionList().size(); i++) {
@@ -188,7 +212,41 @@ public class testComparison {
 		}*/
 		
 		//output to check changes
-		/*for (int i = 0; i < ctmc1.getStates().size(); i++) {
+		System.out.println("new event list... ");
+		for(int j = 0; j < trans.getEventList().size(); j++) {
+			System.out.println(trans.getEventList().get(j).getName());
+		}
+				
+		//check state changes
+		for (int i = 0; i < trans.getStateList().size(); i++) {
+			for (int j = 0; j < trans.getStateList().get(i).length; j++) {
+				System.out.print(trans.getStateList().get(i)[j]);
+			}
+			System.out.println("");
+		}
+		
+		//check transition changes
+		//transitions
+		System.out.println("trans:");
+	    for (int i = 0; i < trans.getTransitionList().size(); i++) {
+	    	for (int j = 0; j < trans.getTransitionList().get(i).length; j++) {
+	    		System.out.print(trans.getTransitionList().get(i)[j]);
+			}
+			System.out.println("");
+		}
+	    
+	    //fdep transitions
+	    System.out.println("fdep trans:");
+	    for (int i = 0; i < trans.getFepTransition().size(); i++) {
+	    	for (int j = 0; j < trans.getFepTransition().get(i).length; j++) {
+	    		System.out.print(trans.getFepTransition().get(i)[j]);
+			}
+			System.out.println("");
+		}
+	    
+		//check in ctmc
+	    System.out.println("---CTMC---");
+		for (int i = 0; i < ctmc1.getStates().size(); i++) {
 			System.out.println(ctmc1.getStates().get(i).getName());
 			if (!ctmc1.getStates().get(i).getOut().isEmpty()) {
 				for (int j = 0; j < ctmc1.getStates().get(i).getOut().size(); j++) {
@@ -202,15 +260,9 @@ public class testComparison {
 					System.out.println("has label " + ctmc1.getStates().get(i).getLabels().get(j).getText());
 				}
 			}
-		}*/
-		
-		//check state changes
-		for (int i = 0; i < trans.getStateList().size(); i++) {
-			for (int j = 0; j < trans.getStateList().get(i).length; j++) {
-				System.out.print(trans.getStateList().get(i)[j]);
-			}
-			System.out.println("");
 		}
+		
+		//save ctmc data
 		
 		//test end
 		System.out.println("test end");

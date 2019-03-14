@@ -17,6 +17,7 @@ import java.lang.annotation.Repeatable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -34,6 +35,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.ui.commands.Priority;
 
 import de.hu_berlin.informatik.ctmc.model.ctmc.CTMC;
 import de.hu_berlin.informatik.ctmc.model.ctmc.CtmcFactory;
@@ -93,12 +95,12 @@ public class Transformer {
 	private Queue<Event> oldEventQueue;
 	private Queue<Dependency> oldDependencyQueue;
 	
-	//old state list
+	//Lists for the incremental transformation
 	private LinkedList<int[]> oldStateList;
-	
 	private LinkedList<Difference> differenceList;
-	
-	private LinkedList<Transition> oldTransitionList;
+	private LinkedList<int[]> oldTransitionList;
+	private LinkedList<int[]> oldFdepTransitionList;
+
 	
 	
 	public Transformer() {
@@ -132,9 +134,10 @@ public class Transformer {
 		oldEventQueue = new LinkedList<>();
 		oldDependencyQueue = new LinkedList<>();
 		
-		oldStateList = new LinkedList<int[]>();
-		
+		oldStateList = new LinkedList<int[]>();	
 		differenceList = new LinkedList<Difference>();
+		oldTransitionList = new LinkedList<int[]>();
+		oldFdepTransitionList = new LinkedList<int[]>();
 		
 	}
 	
@@ -159,6 +162,14 @@ public class Transformer {
 		return fDepList;
 	}
 	
+	public LinkedList<int[]> getFepTransition(){
+		return fDepTransition;
+	}
+	
+	public void setFdepTransitionList(LinkedList<int[]> fdepList) {
+		fDepTransition = fdepList;
+	}
+	
 	public Queue<Gate> getGateQueue() {
 		return gateQueue;
 	}
@@ -177,6 +188,13 @@ public class Transformer {
 	
 	public LinkedList<int[]> getTransitionList() {
 		return transitionList;
+	}
+	
+	/**
+	 * @param oldTransitionList the oldTransitionList to set
+	 */
+	public void setTransitionList(LinkedList<int[]> transList) {
+		transitionList = transList;
 	}
 	
 	//getters for the old dft
@@ -238,22 +256,36 @@ public class Transformer {
 	public void setDifferenceList(LinkedList<Difference> differenceList) {
 		this.differenceList = differenceList;
 	}
-	
-	//getters and setters end
 
 	/**
 	 * @return the oldTransitionList
 	 */
-	public LinkedList<Transition> getOldTransitionList() {
+	public LinkedList<int[]> getOldTransitionList() {
 		return oldTransitionList;
 	}
 
 	/**
 	 * @param oldTransitionList the oldTransitionList to set
 	 */
-	public void setOldTransitionList(LinkedList<Transition> oldTransitionList) {
+	public void setOldTransitionList(LinkedList<int[]> oldTransitionList) {
 		this.oldTransitionList = oldTransitionList;
 	}
+	
+	/**
+	 * @return the oldFdepTransitionList
+	 */
+	public LinkedList<int[]> getOldFdepTransitionList() {
+		return oldFdepTransitionList;
+	}
+
+	/**
+	 * @param oldTransitionList the oldTransitionList to set
+	 */
+	public void setOldFdepTransitionList(LinkedList<int[]> oldFdepTransitionList) {
+		this.oldFdepTransitionList = oldFdepTransitionList;
+	}
+	
+	//getters and setters end
 
 	/**
 	 * @param dft
@@ -1565,10 +1597,10 @@ public class Transformer {
 		} finally {
 			stateWriter.close();
 		}
-		
+		/*
 		//save transitions
 		//1. create file
-		/*File transitions = new File(folder.getAbsoluteFile(), "Transitions.txt");
+		File transitions = new File(folder.getAbsoluteFile(), "Transitions.txt");
 		if (!transitions.getParentFile().mkdirs()) {
 			transitions.getParentFile().mkdirs();
 		}
@@ -1590,8 +1622,36 @@ public class Transformer {
 			e.printStackTrace();
 		} finally {
 			transitionWriter.close();
-		}*/
-		
+		}
+		*/
+		/*
+		//save functionally dependent transitions
+				//2. save transition data
+		if (!fDepTransition.isEmpty()) {
+			//1. create file
+		    File fDepTransitions = new File(folder.getAbsoluteFile(), "FDepTransitions.txt");
+    		if (!fDepTransitions.getParentFile().mkdirs()) {
+	    		fDepTransitions.getParentFile().mkdirs();
+		    }
+		    try {
+		    	fDepTransitions.createNewFile();
+		    } catch (IOException e) {
+		    	e.printStackTrace();
+		    }
+		    PrintWriter fDepTransitionsWriter = null;
+			try {
+			    fDepTransitionsWriter = new PrintWriter(fDepTransitions.getAbsolutePath());
+			    for(int i = 0; i < fDepTransition.size(); i++) {
+			     fDepTransitionsWriter.println(Arrays.toString(fDepTransition.get(i)));
+			    }
+		    } catch (FileNotFoundException e) {
+			     e.printStackTrace();
+		    } finally {
+		    	fDepTransitionsWriter.close();
+		    }
+		}
+		*/
+
 		//save the model for the incremental transformation
 		//prepare the dft copy
 		DynamicFaultTreePackage.eINSTANCE.eClass();
@@ -2767,10 +2827,14 @@ public class Transformer {
 		
 	}
 	
-	public void loadOldStates(String stateFilePath) {
+	public void loadStatesAndTransitions(String filePath) {
 		
         String line = null;
+        String stateFilePath = filePath + "States.txt";
+        String transitionsFilePath = filePath + "Transitions.txt";
+        String fdepTransitionsFilePath = filePath + "FDepTransitions.txt";
 
+        //states
         try {
             FileReader stateReader = new FileReader(stateFilePath);
             BufferedReader bufferedStateReader = new BufferedReader(stateReader);
@@ -2778,7 +2842,7 @@ public class Transformer {
 
             while((line = bufferedStateReader.readLine()) != null) {
             	int[] state = new int[oldEventList.size() + oldGateList.size()];
-            	System.out.println(line);
+            	//System.out.println(line);
             	//trim for easier access
                 line = line.substring(4, line.length()-1);
                 //split the values to convert into integers
@@ -2802,20 +2866,75 @@ public class Transformer {
             System.out.println("error reading file " + stateFilePath);                  
         }
         
+        /*
+        //transitions
+        try {
+            FileReader transitionsReader = new FileReader(transitionsFilePath);
+            BufferedReader bufferedTransReader = new BufferedReader(transitionsReader);
+            //int[] state = new int[oldEventList.size() + oldGateList.size()];
+
+            while((line = bufferedTransReader.readLine()) != null) {
+            	int[] transition = new int[3];
+            	//System.out.println(line);
+            	//trim for easier access
+                line = line.substring(1, line.length()-1);
+                //split the values to convert into integers
+                String[] tmp = line.split(", ");
+                for (int i = 0; i < tmp.length; i++) {
+					int tmp2 = Integer.parseInt(tmp[i]);
+					//System.out.print(tmp2);
+					transition[i] = tmp2;
+					//System.out.print(state[i]);
+				}
+                //System.out.println("");
+                getOldTransitionList().add(transition);
+            }   
+            
+            bufferedTransReader.close();         
+        }
+        catch(FileNotFoundException ex) {
+            System.out.println("unable to open file " + transitionsFilePath);                
+        }
+        catch(IOException ex) {
+            System.out.println("error reading file " + transitionsFilePath);                  
+        }
+        */
+        /*
+        //fdep transitions
+        try {
+            FileReader fdepTransitionsReader = new FileReader(fdepTransitionsFilePath);
+            BufferedReader bufferedFdepTransReader = new BufferedReader(fdepTransitionsReader);
+
+            while((line = bufferedFdepTransReader.readLine()) != null) {
+            	int[] fdepTransition = new int[3];
+            	//System.out.println(line);
+            	//trim for easier access
+                line = line.substring(1, line.length()-1);
+                //split the values to convert into integers
+                String[] tmp = line.split(", ");
+                for (int i = 0; i < tmp.length; i++) {
+					int tmp2 = Integer.parseInt(tmp[i]);
+					//System.out.print(tmp2);
+					fdepTransition[i] = tmp2;
+					//System.out.print(state[i]);
+				}
+                //System.out.println("");
+                getOldTransitionList().add(fdepTransition);
+            }   
+            
+            bufferedFdepTransReader.close();         
+        }
+        catch(FileNotFoundException ex) {
+            System.out.println("unable to open file " + fdepTransitionsFilePath);                
+        }
+        catch(IOException ex) {
+            System.out.println("error reading file " + fdepTransitionsFilePath);                  
+        }
+        */
 	}
 	
-	public void incrementalTransformation(CTMC ctmc) {
-		//create a transition list for convenience
-		/*oldTransitionList = new LinkedList<Transition>();
-		
-		for (int i = 0; i < ctmc.getStates().size(); i++) {
-			for (int j = 0; j < ctmc.getStates().get(i).getOut().size(); j++) {
-				oldTransitionList.add(ctmc.getStates().get(i).getOut().get(j));
-			}
-		}*/
-		
-		//TODO flags for what type of update is necessary
-		
+	public void incrementalTransformation(CTMC ctmc, String newCtmcPath) {
+				
 		//DFT name changed
 		if (differenceList.getFirst().getDifference() == 15) {//changing the dft name is always the fist diff
 			ctmc.setName(dftName);
@@ -2838,90 +2957,7 @@ public class Transformer {
 		
 		//1. label update
 		System.out.println("starting label updates...");
-		//look op states
-		/*for (int i = 0; i < ctmc.getStates().size(); i++) { 
-			boolean[] alreadySet = new boolean[eventList.size()];
-			
-			//look up transitions			
-			for (int j = 0; j < ctmc.getStates().get(i).getOut().size(); j++) {
-				//System.out.println(ctmc.getStates().get(i).getOut().get(j));
-				//look up if there is a possible change(name, probability)
-				for (int k = 0; k < prioOne; k++) {
-					if ((differenceList.get(k).getRefOld().eClass().getName() == "Event" || differenceList.get(k).getRefOld().eClass().getName() == "FunctionalDependency")) {
-						//check if it applies to the current transition 
-						int tmp = differenceList.get(k).getDifference();
-						 switch (tmp) {
-						case 1: // change name
-							//System.out.println("case 1");
-							//System.out.println(differenceList.get(k).getRefOld().getName());
-							//System.out.println("vs");
-							//System.out.println(ctmc.getStates().get(i).getOut().get(j).getName());
-							if (differenceList.get(k).getRefOld().getName().compareTo(ctmc.getStates().get(i).getOut().get(j).getName()) == 0) {
-								ctmc.getStates().get(i).getOut().get(j).setName(differenceList.get(k).getRefNew().getName());
-								System.out.println("set new name: " + ctmc.getStates().get(i).getOut().get(j).getName());
-							}
-							
-							break;
-
-						case 2: // change probability
-							//System.out.println("case 2");
-							//System.out.println(differenceList.get(k).getRefOld().getProbability());
-							//System.out.println("vs");
-							//System.out.println(ctmc.getStates().get(i).getOut().get(j).getProbability());
-							if (differenceList.get(k).getRefNew().getName().compareTo(ctmc.getStates().get(i).getOut().get(j).getName()) == 0
-									&& differenceList.get(k).getRefOld().getProbability() == ctmc.getStates().get(i).getOut().get(j).getProbability()
-									&& alreadySet[eventList.indexOf(differenceList.get(k).getRefNew())] == false) {
-								ctmc.getStates().get(i).getOut().get(j).setProbability(differenceList.get(k).getRefNew().getProbability());
-								System.out.println("set new probibility: " + ctmc.getStates().get(i).getOut().get(j).getProbability());
-								alreadySet[eventList.indexOf(differenceList.get(k).getRefNew())] = true;
-							}
-							
-							break;
-						
-						case 24: //change fdep probability
-							FunctionalDependency tmp1 = (FunctionalDependency) differenceList.get(k).getRefNew();
-							//check if current trans name is part of the fdep event list
-							boolean relevant = false;
-							for (int l = 0; l < tmp1.getEvents().size(); l++) {
-								if (tmp1.getEvents().get(l).getName().compareTo(ctmc.getStates().get(i).getOut().get(j).getName()) == 0 && l != 0) {
-									relevant = true;
-								}
-							}
-							if (relevant == true) {
-								System.out.println("case relevant for " + ctmc.getStates().get(i).getOut().get(j).getName());
-								//check if the trans has to be changed
-								LinkedList<Transition> indexOfTrans = new LinkedList<Transition>();
-								for (int l = 0; l < ctmc.getStates().get(i).getOut().size(); l++) {
-									if (ctmc.getStates().get(i).getOut().get(l).getName().compareTo(ctmc.getStates().get(i).getOut().get(j).getName()) == 0) {
-										indexOfTrans.add(ctmc.getStates().get(i).getOut().get(l));
-									}
-								}
-								if (indexOfTrans.indexOf(ctmc.getStates().get(i).getOut().get(j)) == eventList.indexOf(tmp1)+2) {
-									if (tmp1.getProbability() != ctmc.getStates().get(i).getOut().get(j).getProbability()) {
-										ctmc.getStates().get(i).getOut().get(j).setProbability(tmp1.getProbability());
-										System.out.println("set probability " +ctmc.getStates().get(i).getOut().get(j).getProbability() 
-												+ " for " + ctmc.getStates().get(i).getOut().get(j).getName());
-									}
-								}
-								
-								
-							}				
-							
-							//test fdep 2
-							for (int l = 0; l < alreadySet.length; l++) {
-								
-							}
-							
-							break;
-						}
-					}else {
-						break;
-					}
-				}
-			}
-		}*/
 		
-		//version 3
 		for (int i = 0; i < prioOne; i++) {
 			System.out.println(i);
 			//check every state
@@ -2972,39 +3008,10 @@ public class Transformer {
 							System.out.println("this case is relevant");
 						}
 						if (relevant) {
-							//check which index of transitions with this label in this state this transition has
-						    /*int tIndex = 0;
-						    for (int l = 0; l < ctmc.getStates().get(j).getOut().size(); l++) {
-							    if (ctmc.getStates().get(j).getOut().get(l).getName().compareTo(ctmc.getStates().get(j).getOut().get(k).getName()) == 0) {
-								    if (ctmc.getStates().get(j).getOut().get(l) == ctmc.getStates().get(j).getOut().get(k)) {
-									    break;
-								    }
-								    tIndex++;
-							    }
-						    }
-						    System.out.println("transiton index of " + ctmc.getStates().get(j).getOut().get(k).getName() + " is : " + tIndex);
-						    //check indexof the current fdep
-							int fDepIndex = 1;
-							for (int l = 0; l < fDepList.size(); l++) {
-								if (fDepList.get(l) == tmp1) {
-									break;
-								}
-								for (int l2 = 1; l2 < fDepList.get(l).getEvents().size(); l2++) {
-									if (fDepList.get(l).getEvents().get(l2).getName().compareTo(ctmc.getStates().get(j).getOut().get(k).getName()) == 0) {
-										fDepIndex++;
-										break;
-									}
-								}
-							}
-							System.out.println("fdep index of " + tmp1.getName() + " is: " + fDepIndex);
-							if (tIndex == fDepIndex) {
-								ctmc.getStates().get(j).getOut().get(k).setProbability(tmp1.getProbability());
-								System.out.println("set new probability " + ctmc.getStates().get(j).getOut().get(k).getProbability() + " for " + ctmc.getStates().get(j).getOut().get(k).getName());
-							}*/
 							System.out.println(ctmc.getStates().get(j).getOut().get(k).getProbability());
 							System.out.println(differenceList.get(i).getRefOld().getProbability());
 							if (ctmc.getStates().get(j).getOut().get(k).getProbability() == differenceList.get(i).getRefOld().getProbability()) {
-								System.out.println("yeet?");
+								//System.out.println("relevant");
 								ctmc.getStates().get(j).getOut().get(k).setProbability(tmp1.getProbability());
 								//push it to the end of the list, so we know the last transitions are fdep transitions
 								ctmc.getStates().get(j).getOut().move(ctmc.getStates().get(j).getOut().size()-1, ctmc.getStates().get(j).getOut().get(k));
@@ -3017,7 +3024,6 @@ public class Transformer {
 					}
 				}
 			}
-			//differenceList.removeFirst();
 		}
 		
 		//remove priority 1 differences, since their changes are now applied
@@ -3026,70 +3032,131 @@ public class Transformer {
 		}
 		//label update end
 		
+		//TODO do this in testFile
 		//set the statesList for the addition and removal of events
 		setStateList(oldStateList);
+		//setTransitionList(oldTransitionList);
+		//System.out.println(transitionList);
+		//setFdepTransitionList(oldFdepTransitionList);
+				
+		if (differenceList.getFirst().getPriority() == 2) {
+		    //removing states for every removed event
+			System.out.println("removing states and entries for removed events...");
+		    for (int i = 0; i < differenceList.size(); i++) {
+			    if (differenceList.get(i).getPriority() == 2) {
+		    		//copy of statelist, cannot iterate over the list while modifying it
+			    	//LinkedList<int[]> stateListCopy = stateList;
+				
+		    		//index of the event in the state
+			    	int eventIndex = oldEventList.indexOf(differenceList.get(i).getRefOld());
+			    	
+			    	//remove the event from the list for the next event removal
+			    	getOldEventList().remove(differenceList.get(i).getRefOld());
+				
+		    		//System.out.println(oldEventList);
+				
+		    		//state index to remove from ctmc
+			    	//int stateIndex = 0;
+	    			//System.out.println(eventIndex);
+		    		//new state size
+			    	int stateSize = stateList.getFirst().length-1;
+				
+		    		Iterator<int[]> stateIterator = stateList.iterator();
+		    		//int realStateIndex = 0; //state index in respect of removed elements ,increment, unless we remove a state(+1-1=0)
+		    		int stateIndex = 0; //current state index
+		    		//remove states where the event is 1
+		    		while(stateIterator.hasNext()){
+			    		//if event = 1, remove from state list and ctmc
+		    			//System.out.println("r"+realStateIndex);
+		    			//System.out.println(stateIndex);
+		    			
+		    			int[] stateIteratorNext = stateIterator.next();
+		    			
+			    		if (stateIteratorNext[eventIndex] == 1) {
+			    			//System.out.println("eI = 1");
+			    			//System.out.println("removing state...");
+			    			
+			    			/*
+			    			//removing the transitions from the tranition and fdep transition lists
+			    			//transition list
+			    			Iterator<int[]> transitionIterator = transitionList.iterator(); 
+			    			while (transitionIterator.hasNext()) {
+			    				int[] transitionIteratorNext = transitionIterator.next();
+			    				if (transitionIteratorNext[0] == stateIndex) {
+									transitionIterator.remove();
+								}else if (transitionIteratorNext[1] == stateIndex) {
+									transitionIterator.remove();
+								}
+							}
+			    			
+			    			for (int j = 0; j < transitionList.size(); j++) {
+								if (transitionList.get(j)[0] > stateIndex) {
+									transitionList.get(j)[0]--;
+								}
+								if (transitionList.get(j)[1] > stateIndex) {
+									transitionList.get(j)[1]--;
+								}
+							}*/
+			    			
+			    			//remove the state from its list
+			    			stateIterator.remove();
+			    			
+			    			
+				    		//remove transitions and state from ctmc
+				    		for (int j = 0; j < stateIndex; j++) { //realStateIndex
+				    			/*for (int k = 0; k < ctmc.getStates().get(j).getOut().size(); k++) {
+					    	    		if (ctmc.getStates().get(j).getOut().get(k).getName().compareTo(differenceList.get(i).getRefOld().getName()) == 0) {
+						    			System.out.println("remove this!");
+							    		ctmc.getStates().get(j).getOut().remove(k); 
+			    					}
+				    			}*/
+	    						Iterator<Transition> outIterator = ctmc.getStates().get(j).getOut().iterator();
+	    						while (outIterator.hasNext()) {
+	    							if (outIterator.next().getName().compareTo(differenceList.get(i).getRefOld().getName()) == 0) {
+		    							//System.out.println("remove this");
+			    						outIterator.remove();
+				    				}
+		    					}
+		    				}
+			    			ctmc.getStates().remove(stateIndex); //realStateIndex
+			    		}else {
+				    		//realStateIndex++;
+				    		stateIndex++;
+					    }
+			    		//stateIndex++;
+	    			}
+		    		//remove the entry from states where event = 0
+			    	for (int j = 0; j < stateList.size(); j++) {
+	    				//System.out.println("ei = 0");
+		   			
+		    			int[] state = new int[stateSize];
+			    		System.arraycopy(stateList.get(j), 0, state, 0, eventIndex);
+				    	System.arraycopy(stateList.get(j), eventIndex+1, state, eventIndex, stateList.get(j).length-1-eventIndex-oldGateList.size());
+	    				stateList.set(j, state);
+		    		}
+			    }else {
+				    break;
+	    		}
+		    }
 		
-
-		//removing states for every removed event
-		for (int i = 0; i < differenceList.size(); i++) {
-			if (differenceList.get(i).getPriority() == 2) {
-				System.out.println("removing states and entries for removed events...");
-				//copy of statelist, cannot iterate over the list while modifying it
-				//LinkedList<int[]> stateListCopy = stateList;
-				
-				//index of the event in the state
-				int eventIndex = oldEventList.indexOf(differenceList.get(i).getRefOld());
-				//remove the event from the list for the next event removal
-				getOldEventList().remove(differenceList.get(i).getRefOld());
-				
-				//System.out.println(oldEventList);
-				
-				//state index to remove from ctmc
-				//int stateIndex = 0;
-				//System.out.println(eventIndex);
-				//new state size
-				int stateSize = stateList.getFirst().length-1;
-				
-				Iterator<int[]> iterator = stateList.iterator();
-				//remove states where the event is 1
-				while(iterator.hasNext()){
-					//if event = 1, remove from state list and ctmc
-					if (iterator.next()[eventIndex] == 1) {
-						//System.out.println("eI = 1");
-						iterator.remove();
-						//TODO remove from ctmc
-					}
-				}
-				//remove the entry from states where event = 0
-				for (int j = 0; j < stateList.size(); j++) {
-					//System.out.println("ei = 0");
-					
-					int[] state = new int[stateSize];
-					System.arraycopy(stateList.get(j), 0, state, 0, eventIndex);
-					System.arraycopy(stateList.get(j), eventIndex+1, state, eventIndex, stateList.get(j).length-1-eventIndex-oldGateList.size());
-					stateList.set(j, state);
-				}
-			}else {
-				break;
-			}
-		}
+	    	while (differenceList.getFirst().getPriority() == 2) {
+		    	differenceList.remove();
+    		}
+	    }
 		
-		while (differenceList.getFirst().getPriority() == 2) {
-			differenceList.remove();
-		}
-		
-		//adding new events to states 
-		for (int i = 0; i < differenceList.size(); i++) {
+		//adding new events to states
+		if (differenceList.getFirst().getPriority() == 3) {
+			System.out.println("adding events and states...");
+			for (int i = 0; i < differenceList.size(); i++) {
 	    	//System.out.println(i);
-	    	if (differenceList.get(i).getPriority() == 3) {
-	    		System.out.println("adding events and states...");
+	    	if (differenceList.get(i).getPriority() == 3) {	    		
 	    		//put the event to the front of the event list
 	    		//this will make it easier to create new states later
 	    		eventList.remove(differenceList.get(i).getRefNew());
 	    		eventList.addFirst((Event) differenceList.get(i).getRefNew());
 	    		//modify existing states
 	    		//System.out.println(copyLenght);
-				addEvent();
+				addEvent(ctmc);
 				//copyLenght++;
 				
 				
@@ -3099,12 +3166,24 @@ public class Transformer {
 	    
 	    }
 	    
-	    while (differenceList.getFirst().getPriority() == 3) {
-			differenceList.remove();
+	        while (differenceList.getFirst().getPriority() == 3) {
+			    differenceList.remove();
+		    }
 		}
-	    
+		
+		//TODO remove later
+		//set new state names
+		for (int j = 0; j < ctmc.getStates().size(); j++) {
+			ctmc.getStates().get(j).setName(Integer.toString(j) + "_" + ctmc.getStates().get(j).getName());
+		}
+		
+		//prepare a factory to create transitions/labels for the ctmc
+		CtmcPackage.eINSTANCE.eClass();
+		CtmcFactory factory = CtmcFactory.eINSTANCE;
+			    
 	    //remove gates
-	    for (int i = 0; i < differenceList.size(); i++) {
+		if (differenceList.getFirst().getPriority() == 4) {
+			for (int i = 0; i < differenceList.size(); i++) {
 			if (differenceList.get(i).getPriority() == 4) {
 				System.out.println("removing gates...");
 				int stateSize = stateList.getFirst().length;
@@ -3118,12 +3197,15 @@ public class Transformer {
 			}
 		}
 	    
-	    while (differenceList.getFirst().getPriority() == 4) {
-			differenceList.remove();
+	        while (differenceList.getFirst().getPriority() == 4) {
+			    differenceList.remove();
+		    }
 		}
 	    
+	    
 	    //add gates
-	    for (int i = 0; i < differenceList.size(); i++) {
+		if (differenceList.getFirst().getPriority() == 5) {
+			for (int i = 0; i < differenceList.size(); i++) {
 			if (differenceList.get(i).getPriority() == 5) {
 				System.out.println("adding gates...");
 				int stateSize = stateList.getFirst().length;
@@ -3137,18 +3219,630 @@ public class Transformer {
 			}
 		}
 	    
-	    while (differenceList.getFirst().getPriority() == 5) {
-			differenceList.remove();
+	        while (differenceList.getFirst().getPriority() == 5) {
+			    differenceList.remove();
+		    }
+		}
+		
+		int topLevelGateIndex = eventList.size();
+		//check gate logic and add/remove labels
+		System.out.println("checking gate logic and adding/removing labels...");
+	    if (differenceList.getFirst().getPriority() == 6) {
+	    	
+	    	checkGates(stateList.getFirst());
+			
+	    	for (int i = 1; i < stateList.size(); i++) {
+				checkGates(stateList.get(i));
+				
+				for (int j = 0; j < stateList.get(i).length; j++) {
+					System.out.print(stateList.get(i)[j]);
+				}
+				System.out.println();
+				//remove/add labels
+				if (stateList.get(i)[topLevelGateIndex] == 0) {
+					if (!ctmc.getStates().get(i).getLabels().isEmpty()) {
+						ctmc.getStates().get(i).getLabels().clear();
+					}
+				}else {
+					if (ctmc.getStates().get(i).getLabels().isEmpty()) {
+						Label end = factory.createLabel();
+						end.setState(ctmc.getStates().get(i));
+						end.setText("System failed");
+						ctmc.getStates().get(i).getLabels().add(end);
+					}
+				}
+			}
+		}
+		
+	    //transitions
+	    
+	    //fill out the transition and fdep trans lists with data from the ctmc
+	    for (int i = 0; i < ctmc.getStates().size(); i++) {
+			for (int j = 0; j < ctmc.getStates().get(i).getOut().size(); j++) {
+				int[] trans = new int[3];
+				
+				//index of the current state
+				trans[0] = i;
+				
+				//index of the target state
+				trans[1] = ctmc.getStates().indexOf(ctmc.getStates().get(i).getOut().get(j).getTo());
+				
+				//look up index of the event
+				for (int k = 0; k < eventList.size(); k++) {
+					if (eventList.get(k).getName().compareTo(ctmc.getStates().get(i).getOut().get(j).getName()) == 0) {
+						trans[2] = k;
+						break;
+					}
+				}
+				//TODO TEST IT FOR FDEP
+				//add the transition to it's respective list
+				if (transitionList.contains(trans)) {
+					int[] fDepTrans = new int[4];
+					fDepTrans[0] = trans[0];
+					fDepTrans[1] = trans[1];
+					fDepTrans[2] = trans[2];
+					//check which fdep it triggered
+					for (int k = 0; k < ctmc.getStates().get(trans[0]).getIn().size(); k++) {
+						for (int k2 = 0; k2 < fDepList.size(); k2++) {
+							if (ctmc.getStates().get(trans[0]).getIn().get(k).getName().compareTo(fDepList.get(k2).getEvents().get(0).getName()) == 0) {
+								fDepTrans[3] = k2;
+								if (!fDepTransition.contains(fDepTrans)) {
+									fDepTransition.add(fDepTrans);
+								}
+							}
+						}
+					}
+					
+				}else {
+					transitionList.add(trans);
+				}
+			}
 		}
 	    
-	    /*for (int i = 0; i < eventList.size(); i++) {
-			System.out.println(eventList.get(i));
-		}*/
+	    //fill the lists and ctmc with the new transitions
+	    
+		//fail safe check
+		//setup for fs check
+		for(int i = 0; i < stateList.size(); i++) {
+			boolean[] stateFS = new boolean[gateList.size()];
+			failSafeList.add(stateFS);
+		}
+		// same for seq
+		if (!seqList.isEmpty()) {
+			for(int i = 0; i < stateList.size(); i++) {
+				boolean[] stateSeq = new boolean[seqList.size()];
+				seqFailList.add(stateSeq);
+			}
+		}
 		
+		//if a gate becomes fail safe, we can not transition from it to a non fail safe state, first state is always good to go
+		for(int h = 1; h < stateList.size(); h++) {
+			for(int i = 0; i < gateList.size(); i++) {
+				String gateType = gateList.get(i).eClass().getName();
+			    switch(gateType) {
+			    case("PAND"):
+			    	//create a priority list
+				    LinkedList<Element> prioListPAND = new LinkedList<>();
+			        for(int j = 0; j <gateList.get(i).getChildEvent().size(); j++) {
+			        	prioListPAND.add(gateList.get(i).getChildEvent().get(j));
+			        }
+			        for(int j = 0; j <gateList.get(i).getChildGate().size(); j++) {
+			    	    prioListPAND.add(gateList.get(i).getChildGate().get(j));
+			        }
+			        for(int j = 0; j < prioListPAND.size(); j++) {
+			    	    prioListPAND.set(prioListPAND.get(j).getSequencePosition(), prioListPAND.get(j));
+			        }
+			        //check for fail safety
+			        //case 1: if we have a leading 0, we can't transition to a non-fs state(state with leading 1), unless every value is 0
+			        //e.g. PAND(0010)
+			        int firstIndexPAND = 0;
+			        if (prioListPAND.getFirst().eClass().getName() == "Event") {
+						//firstIndexPAND = eventList.indexOf(prioListPAND.getFirst());
+			        	//duplicate test
+			    		for(int ind = 0; ind < eventList.size(); ind++) {
+			    			if (eventList.get(ind).getName().equals(prioListPAND.getFirst().getName())) {
+								firstIndexPAND = ind;
+							}
+			    		}
+			    		//duplicate test end
+					}else {
+						firstIndexPAND = gateList.indexOf(prioListPAND.getFirst());
+					}
+			        
+			        if (stateList.get(h)[firstIndexPAND] == 0) {
+						//check if the rest is 0
+			        	for(int j = 1; j < prioListPAND.size(); j++) {
+			        		if (prioListPAND.get(j).eClass().getName() == "Event") {
+								for(int k = 0; k < eventList.size(); k++) {
+									if (eventList.get(k).getName().equals(prioListPAND.get(j).getName())) {
+										if (stateList.get(h)[k] == 1) {
+											failSafeList.get(h)[i] = true;
+										}
+									}
+								}
+							}else {
+								if (stateList.get(h)[gateList.indexOf(prioListPAND.get(j))] == 1) {
+									failSafeList.get(h)[i] = true;
+								}
+							}
+			        	}
+					}else {
+						//case 2: after leading 1s we have 0s and than another 1
+			            //the 0s in between can't become 1s
+			            int series = 0;
+			            for(int j = 0; j < prioListPAND.size(); j++) {
+			            	int index = 0;
+						    if(prioListPAND.get(j).eClass().getName() == "Event") {
+							    //index = eventList.indexOf(prioListPAND.get(j));
+						    	//duplicate test
+						    	for(int inde = 0; inde < eventList.size(); inde++) {
+						    		if (eventList.get(inde).getName().equals(prioListPAND.get(j).getName())) {
+										index = inde;
+									}
+						    	}
+						    	//duplicate test end
+						    }else {
+							    index = gateList.indexOf(prioListPAND.get(j)) + eventList.size();
+						    }
+						    if (stateList.get(h)[index] == 1) {
+							    if (series == j) {
+								    series++;
+							    }else {
+							    	failSafeList.get(h)[i] = true;
+							    	break;
+							    }
+						    }
+						 }			            
+					}
+			        
+				    break;
+				case("POR"):
+					//create a priority list of its children
+					LinkedList<Element> prioListPOR = new LinkedList<>();
+				    for(int j = 0; j < gateList.get(i).getChildEvent().size(); j++) {
+				    	prioListPOR.add(gateList.get(i).getChildEvent().get(j));
+				    }
+				    for(int j = 0; j < gateList.get(i).getChildGate().size(); j++) {
+				    	prioListPOR.add(gateList.get(i).getChildGate().get(j));
+				    }
+				    //sort the list
+				    for(int j = 0; j < prioListPOR.size(); j++) {
+				    	prioListPOR.set(prioListPOR.get(j).getSequencePosition(), prioListPOR.get(j));
+				    }
+				    //case 1: check if we have a leading zero -> fs, unless every value is 0
+				    //get the index
+				    int firstIndexPOR = 0;
+				    if(prioListPOR.getFirst().eClass().getName() == "Event") {
+				    	eventList.indexOf(prioListPOR.getFirst());
+				    }else {
+				    	gateList.indexOf(prioListPOR.getFirst());
+				    }
+				    //check if its zero
+				    if (stateList.get(h)[firstIndexPOR] == 0) {
+				    	//check if the rest is 0
+			        	for(int j = 1; j < prioListPOR.size(); j++) {
+			        		if (prioListPOR.get(j).eClass().getName() == "Event") {
+								for(int k = 0; k < eventList.size(); k++) {
+									if (eventList.get(k).getName().equals(prioListPOR.get(j).getName())) {
+										if (stateList.get(h)[k] == 1) {
+											failSafeList.get(h)[i] = true;
+										}
+									}
+								}
+							}else {
+								if (stateList.get(h)[gateList.indexOf(prioListPOR.get(j))] == 1) {
+									failSafeList.get(h)[i] = true;
+								}
+							}
+			        	}
+					}else {
+						//case 2: check if we have a fail after a series -> fs
+					    int seriesPOR = 0;
+					    for(int j = 0; j < prioListPOR.size(); j++) {
+			            	int index;
+						    if(prioListPOR.get(j).eClass().getName() == "Event") {
+							    //index = eventList.indexOf(prioListPOR.get(j));
+						    	//duplicate test
+						    	index = 0;
+						    	for(int dex = 0; dex < eventList.size(); dex ++) {
+						    		if (eventList.get(dex).getName().equals(prioListPOR.get(j).getName())) {
+										index = dex;
+									}
+						    	}
+						    	//duplicate test end
+						    }else {
+							    index = gateList.indexOf(prioListPOR.get(j)) + eventList.size();
+						    }
+						    if (stateList.get(h)[index] == 1) {
+							    if (seriesPOR == j) {
+								    seriesPOR++;
+							    }else {
+							    	failSafeList.get(h)[i] = true;
+							    	break;
+							    }
+						    }
+						 }
+					}
+				    				    
+					break;
+			    case("XOR"):
+			    	//check if more than one child has failed -> fs
+			    	int failedChildren = 0;
+			    	for(int j = 0; j < gateList.get(i).getChildGate().size(); j++) {
+			    		int index = gateList.indexOf(gateList.get(i).getChildGate().get(j)) + eventList.size();
+			    		if(stateList.get(h)[index] == 1) {
+			    			failedChildren++;
+			    		}
+			    	}
+			        for(int j = 0; j < gateList.get(i).getChildEvent().size(); j++) {
+			        	//int index = eventList.indexOf(gateList.get(i).getChildEvent().get(j));
+			        	//duplicate test
+			        	int index = 0;
+			        	for(int idex = 0; idex < eventList.size(); idex++) {
+			        		if (eventList.get(idex).getName().equals(gateList.get(i).getChildEvent().get(j).getName())) {
+								index = idex;
+							}
+			        	}
+			        	//duplicate test end
+			        	if(stateList.get(h)[index] == 1) {
+			        		failedChildren++;
+			        	}
+			        }
+			        if (failedChildren > 1) {
+						failSafeList.get(h)[i] = true;
+					}
+				    break;
+			    }
+			}
+			//check for sequences, if a sequence is violated -> fs, saved in seqFailList
+			if (!seqList.isEmpty()) {
+				int count = 0;
+				for(int i = 0; i < seqList.size(); i++) {
+					for(int j = 0; j < seqList.get(i).getEvents().size(); j++) {
+						//int index = eventList.indexOf(seqList.get(i).getEvents().get(j));
+						//duplicate test
+						int index = 0;
+						for(int k = 0; k < eventList.size(); k++) {
+							if (eventList.get(k).getName().equals(seqList.get(i).getEvents().get(j).getName())) {
+								index = k;
+							}
+						}
+						//duplicat test end
+						if (stateList.get(h)[index] == 1) {
+							if (count == j) {
+								count++;
+							}else {
+								seqFailList.get(h)[i] = true;
+							}
+						}
+					}
+				}
+			}
+		}
+		//testOut
+		System.out.println("failSafeList:");
+		for(int i = 0; i < failSafeList.size(); i++) {
+			for(int j = 0; j < failSafeList.getFirst().length; j++) {
+				System.out.print(failSafeList.get(i)[j] + " ");
+			}
+			System.out.println(i);
+		}
+		System.out.println("seqFailList");
+		for(int i = 0; i < seqFailList.size(); i++) {
+			for(int j = 0; j < seqFailList.getFirst().length; j++) {
+				System.out.print(seqFailList.get(i)[j] + " ");
+			}
+			System.out.println(i);
+		}
 		
+		//TODO TEST IT
+		//check if the existing transitions are correct
+		//transition list
+		//make an iterator to be able to remove transitions while iterating
+		Iterator<int[]> transitionIterator = transitionList.iterator();
+		while (transitionIterator.hasNext()) {
+			int[] trans = transitionIterator.next();
+			//transition through the failsafe lists and check if we go fro fs to non fs
+			for (int i = 0; i < gateList.size(); i++) {
+				if (failSafeList.get(trans[0])[i] == true && failSafeList.get(trans[1])[i] == false) {
+					transitionIterator.remove();
+					//remove from ctmc
+					Iterator<Transition> ctmcTransIterator = ctmc.getStates().get(trans[0]).getOut().iterator();
+					while (ctmcTransIterator.hasNext()) {
+						Transition ctmcTrans = ctmcTransIterator.next();
+						if (ctmcTrans.getName().compareTo(eventList.get(trans[2]).getName()) == 0) {
+							if (ctmcTrans.getProbability() == eventList.get(trans[2]).getProbability()) {
+								ctmcTransIterator.remove();
+								break;
+							}
+						}
+					}
+				}else if (!seqFailList.isEmpty() && seqFailList.get(trans[0])[i] == true && seqFailList.get(trans[1])[i] == false) {
+					transitionIterator.remove();
+					//remove from ctmc
+					Iterator<Transition> ctmcTransIterator = ctmc.getStates().get(trans[0]).getOut().iterator();
+					while (ctmcTransIterator.hasNext()) {
+						Transition ctmcTrans = ctmcTransIterator.next();
+						if (ctmcTrans.getName().compareTo(eventList.get(trans[2]).getName()) == 0) {
+							if (ctmcTrans.getProbability() == eventList.get(trans[2]).getProbability()) {
+								ctmcTransIterator.remove();
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		//fdep transitions
+		Iterator<int[]> fDepTransitionIterator = fDepTransition.iterator();
+		while (fDepTransitionIterator.hasNext()) {
+			int[] trans = fDepTransitionIterator.next();
+			//transition through the failsafe lists and check if we go fro fs to non fs
+			for (int i = 0; i < gateList.size(); i++) {
+				if (failSafeList.get(trans[0])[i] == true && failSafeList.get(trans[1])[i] == false) {
+					fDepTransitionIterator.remove();
+					//remove from ctmc
+					Iterator<Transition> ctmcTransIterator = ctmc.getStates().get(trans[0]).getOut().iterator();
+					while (ctmcTransIterator.hasNext()) {
+						Transition ctmcTrans = ctmcTransIterator.next();
+						if (ctmcTrans.getName().compareTo(eventList.get(trans[2]).getName()) == 0) {
+							if (ctmcTrans.getProbability() == fDepList.get(trans[3]).getProbability()) {
+								ctmcTransIterator.remove();
+								break;
+							}
+						}
+					}
+				}else if (!seqFailList.isEmpty() && seqFailList.get(trans[0])[i] == true && seqFailList.get(trans[1])[i] == false) {
+					fDepTransitionIterator.remove();
+					//remove from ctmc
+					Iterator<Transition> ctmcTransIterator = ctmc.getStates().get(trans[0]).getOut().iterator();
+					while (ctmcTransIterator.hasNext()) {
+						Transition ctmcTrans = ctmcTransIterator.next();
+						if (ctmcTrans.getName().compareTo(eventList.get(trans[2]).getName()) == 0) {
+							if (ctmcTrans.getProbability() == fDepList.get(trans[3]).getProbability()) {
+								ctmcTransIterator.remove();
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		/*//prepare a factory to create transitions for the ctmc
+		CtmcPackage.eINSTANCE.eClass();
+		CtmcFactory factory = CtmcFactory.eINSTANCE;
+		*/
+		//filling the transition list
+		//gates are checkt for fail safey, can't transition from fail safe to non fail safe, same for sequences
+		int i = 0;
+		int j = 0;
+		while(i < stateList.size()) {
+			j = i+1;
+			while(j < stateList.size()) {
+				int difference = 0;
+				for(int k = 0; k < eventList.size(); k++) {
+					int compareEvents = stateList.get(i)[k] - stateList.get(j)[k];
+					if (compareEvents < 0 || compareEvents > 0) {
+						difference++;
+					}
+				}
+				boolean transPossible = true;
+				if (difference == 1) {
+					for(int k = 0; k < gateList.size(); k++) {
+						if(failSafeList.get(i)[k] == true && failSafeList.get(j)[k] == false) {
+							transPossible = false;
+						}
+					}
+					if(!seqList.isEmpty()) {
+						for(int k = 0; k < seqList.size() ; k++) {
+							if (seqFailList.get(i)[k] == true && seqFailList.get(j)[k] == false) {
+								transPossible = false;
+							}
+						}
+					}
+					if(transPossible == true) {
+						for(int k = 0; k < eventList.size(); k++) {
+							int compareEvents = stateList.get(i)[k] - stateList.get(j)[k];
+						    if(compareEvents < 0){
+						    	int[] transition = new int[3];
+							    transition[0] = i;
+							    transition[1] = j;
+							    transition[2] = k;
+							    boolean add = true;
+							    for (int l = 0; l < transitionList.size(); l++) {
+									if (transitionList.get(l)[0] == transition[0]) {
+										if (transitionList.get(l)[1] == transition[1]) {
+											if (transitionList.get(l)[2] == transition[2]) {
+												add = false;
+											}
+										}
+									}
+								}
+							    if (add == true) {
+									transitionList.add(transition);
+									
+									//add transition to ctmc
+									Transition trans = factory.createTransition();
+									trans.setName(eventList.get(transition[2]).getName());
+									trans.setProbability(eventList.get(transition[2]).getProbability());
+									trans.setDuration(1.0f);
+									//set out for from state
+									trans.setFrom(ctmc.getStates().get(transition[0]));
+									ctmc.getStates().get(transition[0]).getOut().add(trans);
+									//set in for to state
+									trans.setTo(ctmc.getStates().get(transition[1]));
+									ctmc.getStates().get(transition[1]).getIn().add(trans);
+								}
+							    /*if(!transitionList.contains(transition)) { //TODO contains not working???
+							    	transitionList.add(transition);
+							    }else {
+									System.out.println("exists");
+								}*/
+						    }
+					    }
+					}
+					
+				}
+				j++;
+			}
+			i++;
+		}
+		//testOut
+		System.out.println("transitions: ");
+		for(int l = 0; l < transitionList.size(); l++) {
+			System.out.print("transition nr " + l + ": ");
+			for(int m = 0; m < transitionList.getFirst().length; m++) {
+				System.out.print(transitionList.get(l)[m]+", ");
+			}
+			System.out.println("");
+		}
+		
+		//TODO TEST
+		//transitions triggered by functional dependencies
+		if(!fDepList.isEmpty()) {
+			for (int k = 0; k < fDepList.size(); k++) {
+				int trigger = eventList.indexOf(fDepList.get(k).getEvents().get(0));
+                //check all states for the trigger, skip the first one
+				for(int l = 1; l < stateList.size(); l++) {
+					boolean triggered = false;
+					//check if the trigger event was triggered by a transition in this state
+					//for(int m = 0; m < eventList.size(); m++) {
+						if (stateList.get(l)[trigger] == 1) {
+							//check if there is a direct transition to the state, otherwise ignore
+							for(int n = 0; n < transitionList.size(); n++) {
+								//check if target state is the current state l(the letter)
+								if (transitionList.get(n)[1] == l) {
+									//check if the trigger failed
+									if (transitionList.get(n)[2] == trigger) {
+										triggered = true;
+									}
+								}
+							}
+						}
+						//if it was triggered by a transition -> continue in the if
+						if (triggered == true) {
+							//search for states to transition to
+							for(int m = l+1; m < stateList.size(); m++) {
+								int difference = 0;
+								//compare every event
+								for(int n = 0; n < eventList.size(); n++) {
+									int compareEvents = stateList.get(l)[n] - stateList.get(m)[n];
+									if (compareEvents < 0 || compareEvents > 0) {
+										difference++;
+									}
+								}
+								//check for seqeuences and fail safety
+								boolean fsOrSeq = false;
+								//check for sequences
+								if (!seqList.isEmpty()) {
+									for(int x = 0; x < seqFailList.get(l).length; x++) {
+									    if (seqFailList.get(l)[x] == true) {
+										    if (seqFailList.get(m)[x] == false) {
+											    fsOrSeq = true;
+										    }
+									    }
+								    }
+								}
+								//check for fail safety
+								if (fsOrSeq == false) {
+									for(int y = 0; y < failSafeList.get(l).length; y++) {
+										if (failSafeList.get(l)[y] == true) {
+											if (failSafeList.get(m)[y] == false) {
+												fsOrSeq = true;
+											}
+										}
+									}
+								}
+								//System.out.println(fsOrSeq);
+								
+								//if the differece is only 1 and if it is at an event in the eventlist of the fdep
+								//add a transition between the states into fDepTransition
+								if (difference == 1 && fsOrSeq == false) {
+									for(int n = 1; n < fDepList.get(k).getEvents().size(); n++) {
+										int dependentEvent = eventList.indexOf(fDepList.get(k).getEvents().get(n));
+										if (stateList.get(l)[dependentEvent] == 0) {
+											if (stateList.get(m)[dependentEvent] == 1) {
+												int[] transition = new int[4];
+												transition[0] = l;
+												transition[1] = m;
+												transition[2] = dependentEvent;
+												transition[3] = eventList.indexOf(fDepList.get(k).getEvents().get(0));
+												//check if it already exists
+												boolean add = true;
+												for (int o = 0; o < fDepTransition.size(); o++) {
+													if (fDepTransition.get(o)[0] == transition[0]) {
+														if (fDepTransition.get(o)[1] == transition[1]) {
+															if (fDepTransition.get(o)[2] == transition[2]) {
+																if (fDepTransition.get(0)[3] == transition[3]) {
+																	add = false;
+																}
+															}
+														}
+													}
+												}
+												if (add == true) {
+													fDepTransition.add(transition);
+													
+													//add to ctmc
+													//add transition to ctmc
+													Transition trans = factory.createTransition();
+													trans.setName(eventList.get(transition[2]).getName());
+													trans.setProbability(fDepList.get(k).getProbability());
+													trans.setDuration(1.0f);
+													//set out for from state
+													trans.setFrom(ctmc.getStates().get(transition[0]));
+													ctmc.getStates().get(transition[0]).getOut().add(trans);
+													//set in for to state
+													trans.setTo(ctmc.getStates().get(transition[1]));
+													ctmc.getStates().get(transition[1]).getIn().add(trans);
+												}
+												/*if (!fDepTransition.contains(transition)) {
+													fDepTransition.add(transition);
+												}*/
+											}
+										}
+									}
+								}
+							}
+						}
+					//}
+				}
+			}
+		}
+		//testOut
+		if (!fDepTransition.isEmpty()) {
+			System.out.println("functionally dependent transitions:");
+		}
+		for(int k = 0; k < fDepTransition.size(); k++) {
+			System.out.print("transition nr " + k +": ");
+			for(int l = 0; l < fDepTransition.getFirst().length; l ++) {
+				System.out.print(fDepTransition.get(k)[l] +", ");
+			}
+			System.out.println("");
+		}
+		
+		//TODO SET LABELS
+		
+	  	//TODO save changes to ctmc, TEST
+		//prepare a resourceset and a recource for the dft to save it
+		Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
+		reg.getExtensionToFactoryMap().put("ctmc", new XMIResourceFactoryImpl());
+		ResourceSet rs = new ResourceSetImpl();
+		Resource r = rs.createResource(URI.createURI(newCtmcPath));
+						
+		//add the dft as content to the resource
+		r.getContents().add(ctmc);
+			
+		//try to save it
+		try {
+			r.save(null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
-	public void addEvent() {
+	public void addEvent(CTMC ctmc) {
 		
 		int copyLenght = oldEventList.size()+1;
 		int stateListSize = stateList.size();
@@ -3172,11 +3866,175 @@ public class Transformer {
     		System.arraycopy(stateList.get(j), 1, state, 1, copyLenght); //copy event values to new state
 			state[0] = 1;
 			stateList.add(state);
-			//TODO add code to create the state in the ctmc
 			
+			//create the state in the ctmc
+			CtmcFactory factory = CtmcFactory.eINSTANCE;
+			State ctmcState = factory.createState();
+			//TODO change this and remove the other name setting part
+			ctmcState.setName("n");
+			ctmcState.setExitRate(0.0f);
+			ctmc.getStates().add(ctmcState);
 		}
 		//System.out.println(eventList);
 		//System.out.println(gateList);
+	}
+	
+	public void translateDFTtoGalileo(String filePath) {
+		
+		File targetDFT = new File(filePath, dftName+".dft");
+		
+		//creating the file
+		try {
+			targetDFT.createNewFile();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		//translate
+		PrintWriter dftWriter = null;
+		try {
+			dftWriter = new PrintWriter(targetDFT.getAbsolutePath());
+			
+			//top level gate
+			dftWriter.println("toplevel \"" + gateList.getFirst().getName() + "\";");
+			
+			//gates
+			for (int i = 0; i < gateList.size(); i++) {
+				dftWriter.print("\"" + gateList.get(i).getName() + "\" ");
+				String type = gateList.get(i).eClass().getName();
+				switch (type) {
+				case "AND":
+					dftWriter.print("and");
+					break;
+				case "OR":
+					dftWriter.print("or");
+					break;
+				case "PAND":
+					dftWriter.print("pand");
+					break;
+				case "Spare":
+					dftWriter.print("hsp");
+				}
+				//child gates and events
+				LinkedList<Element> childList = new LinkedList<Element>();
+				for (int j = 0; j < gateList.get(i).getChildEvent().size(); j++) {
+					childList.add(gateList.get(i).getChildEvent().get(j));
+				}
+				for (int j = 0; j < gateList.get(i).getChildGate().size(); j++) {
+					childList.add(gateList.get(i).getChildGate().get(j));
+				}
+				//sort the child list
+				for (int j = 0; j < childList.size(); j++) {
+					Collections.swap(childList, childList.indexOf(childList.get(j)), childList.get(j).getSequencePosition());
+				}
+				//write to file
+				for (int j = 0; j < childList.size(); j++) {
+					if (childList.get(j).eClass().getName() == "Event") {
+						dftWriter.print(" \"Event_" + childList.get(j).getName() + "\"");
+					}else {
+						dftWriter.print(" \"" + childList.get(j).getName() + "\"");	
+					}
+				}
+				
+				//spares for spare gates
+				if (type.compareTo("Spare") == 0) {
+					Spare tmp =  (Spare) gateList.get(i);
+					for (int j = 0; j < tmp.getSpares().size(); j++) {
+						dftWriter.print("\"" + tmp.getSpares().get(j).getName() + "\"");
+					}
+				}
+				//new line
+				dftWriter.println(";");
+			}
+			
+			//TODO test
+			for (int i = 0; i < seqList.size(); i++) {
+				dftWriter.print("\"" + seqList.get(i).getName() + "\"" + " seq ");
+				for (int j = 0; j < seqList.get(i).getEvents().size(); j++) {
+					dftWriter.print("\"Event_" + seqList.get(i).getEvents().get(j).getName() + "\"");
+				}
+				dftWriter.println();
+			}
+			//TODO dep
+			for (int i = 0; i < fDepList.size(); i++) {
+				dftWriter.print("\"" + fDepList.get(i).getName() + "\"" + " fdep ");
+				for (int j = 0; j < fDepList.get(i).getEvents().size(); j++) {
+					dftWriter.print("\"Event_" + fDepList.get(i).getEvents().get(j).getName() + "\"");
+				}
+				dftWriter.println();
+			}
+			
+			//events
+			for (int i = 0; i < eventList.size(); i++) {
+				dftWriter.println("\"Event_" + eventList.get(i).getName() + "\" lambda=" + eventList.get(i).getProbability() + " dorm=1.0;");
+			}
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			dftWriter.close();
+		}
+	}
+	
+	public void translateCTMCtoExplicit(CTMC ctmc, String filePath) {
+		
+		File traFile = new File(filePath, ctmc.getName() + ".tra");
+		File labFile = new File(filePath, ctmc.getName() + ".lab");
+		
+		//creating the files
+		//.tra
+		try {
+			traFile.createNewFile();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		//.lab
+		try {
+			labFile.createNewFile();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		//translate
+		PrintWriter traWriter = null;
+		PrintWriter labWriter = null;
+		try {
+			traWriter = new PrintWriter(traFile.getAbsolutePath());
+			labWriter = new PrintWriter(labFile.getAbsolutePath());
+			
+			traWriter.println("ctmc");
+			
+			labWriter.println("#DECLARATION");
+			labWriter.println("init done");
+			labWriter.println("#END");
+			labWriter.println("0 init");
+			
+			//first state
+			for (int i = 0; i < ctmc.getStates().get(0).getOut().size(); i++) {
+				String line = "0 " + ctmc.getStates().indexOf(ctmc.getStates().get(0).getOut().get(i).getTo()) + " " + ctmc.getStates().get(0).getOut().get(i).getProbability();
+				traWriter.println(line);
+				//labWriter.println("0 init");
+			}
+			
+			for (int i = 1; i < ctmc.getStates().size(); i++) {
+				
+				if (!ctmc.getStates().get(i).getLabels().isEmpty()) {
+					labWriter.println(i + " done");
+				}
+				if (ctmc.getStates().get(i).getOut().isEmpty()) {
+					traWriter.println(i + " " + i + " " + 1);
+				}
+				for (int j = 0; j < ctmc.getStates().get(i).getOut().size(); j++) {
+					String line = i + " " + ctmc.getStates().indexOf(ctmc.getStates().get(i).getOut().get(j).getTo()) + " " + ctmc.getStates().get(0).getOut().get(j).getProbability();
+					traWriter.println(line);
+				}
+			}
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			labWriter.close();
+			traWriter.close();
+		}
 	}
 	
 }//end transformer

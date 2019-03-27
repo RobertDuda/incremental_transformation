@@ -9,7 +9,7 @@ public class testTranslationDFT {
 	public static void main(String[] args) {
 		
 		//URI of dft model
-		String tmp1 ="File://home/rob/runtime-EclipseApplication/Models/8. Add gate/Gate.dynamicfaulttree";
+		String tmp1 ="File://home/rob/runtime-EclipseApplication/Generated Models/Test3.dynamicfaulttree";
 		URI testDFT1_URI = URI.createURI(tmp1);	
 		
 		//path for the translated model

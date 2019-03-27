@@ -1,41 +1,25 @@
-package de.hu_berlin.informatik.transformer;
+ package de.hu_berlin.informatik.transformer;
 
 
-import java.awt.List;
-import java.beans.FeatureDescriptor;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.Writer;
-import java.lang.annotation.Repeatable;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.eclipse.swt.widgets.Link;
-import org.eclipse.ui.commands.Priority;
 
 import de.hu_berlin.informatik.ctmc.model.ctmc.CTMC;
 import de.hu_berlin.informatik.ctmc.model.ctmc.CtmcFactory;
@@ -3895,25 +3879,37 @@ public class Transformer {
 			dftWriter = new PrintWriter(targetDFT.getAbsolutePath());
 			
 			//top level gate
-			dftWriter.println("toplevel \"" + gateList.getFirst().getName() + "\";");
+			dftWriter.println("toplevel \"Top_Level_Event_" + gateList.getFirst().getName() + "\";");
 			
 			//gates
 			for (int i = 0; i < gateList.size(); i++) {
-				dftWriter.print("\"" + gateList.get(i).getName() + "\" ");
+				if (i == 0) {
+					dftWriter.print("\"Top_Level_Event_" + gateList.get(i).getName() + "\" ");
+				}else {
+					dftWriter.print("\"Gate_" + gateList.get(i).getName() + "\" ");
+				}
+				//dftWriter.print("\"Gate_" + gateList.get(i).getName() + "\" ");
 				String type = gateList.get(i).eClass().getName();
+				//System.out.println(type);
 				switch (type) {
 				case "AND":
+					//dftWriter.print("\"AND_" + gateList.get(i).getName() + "\" ");
 					dftWriter.print("and");
 					break;
 				case "OR":
+					//dftWriter.print("\"OR_" + gateList.get(i).getName() + "\" ");
 					dftWriter.print("or");
 					break;
 				case "PAND":
+					//dftWriter.print("\"PAND_" + gateList.get(i).getName() + "\" ");
 					dftWriter.print("pand");
 					break;
 				case "Spare":
+					//dftWriter.print("\"Spare_" + gateList.get(i).getName() + "\" ");
 					dftWriter.print("hsp");
+					break;
 				}
+
 				//child gates and events
 				LinkedList<Element> childList = new LinkedList<Element>();
 				for (int j = 0; j < gateList.get(i).getChildEvent().size(); j++) {
@@ -3931,11 +3927,12 @@ public class Transformer {
 					if (childList.get(j).eClass().getName() == "Event") {
 						dftWriter.print(" \"Event_" + childList.get(j).getName() + "\"");
 					}else {
-						dftWriter.print(" \"" + childList.get(j).getName() + "\"");	
+						dftWriter.print(" \"Gate_" + childList.get(j).getName() + "\"");	
 					}
 				}
+				dftWriter.println(";");
 				
-				//spares for spare gates
+				/*//spares for spare gates
 				if (type.compareTo("Spare") == 0) {
 					Spare tmp =  (Spare) gateList.get(i);
 					for (int j = 0; j < tmp.getSpares().size(); j++) {
@@ -3943,24 +3940,24 @@ public class Transformer {
 					}
 				}
 				//new line
-				dftWriter.println(";");
+				dftWriter.println(";");*/
 			}
 			
 			//TODO test
 			for (int i = 0; i < seqList.size(); i++) {
-				dftWriter.print("\"" + seqList.get(i).getName() + "\"" + " seq ");
+				dftWriter.print("\"Dep_" + seqList.get(i).getName() + "\"" + " seq");
 				for (int j = 0; j < seqList.get(i).getEvents().size(); j++) {
-					dftWriter.print("\"Event_" + seqList.get(i).getEvents().get(j).getName() + "\"");
+					dftWriter.print(" \"Event_" + seqList.get(i).getEvents().get(j).getName() + "\"");
 				}
-				dftWriter.println();
+				dftWriter.println(";");
 			}
 			//TODO dep
 			for (int i = 0; i < fDepList.size(); i++) {
-				dftWriter.print("\"" + fDepList.get(i).getName() + "\"" + " fdep ");
+				dftWriter.print("\"Dep_" + fDepList.get(i).getName() + "\"" + " fdep");
 				for (int j = 0; j < fDepList.get(i).getEvents().size(); j++) {
-					dftWriter.print("\"Event_" + fDepList.get(i).getEvents().get(j).getName() + "\"");
+					dftWriter.print(" \"Event_" + fDepList.get(i).getEvents().get(j).getName() + "\"");
 				}
-				dftWriter.println();
+				dftWriter.println(";");
 			}
 			
 			//events

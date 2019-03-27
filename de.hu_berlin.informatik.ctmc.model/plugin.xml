@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated ctmc -->
+      <package
+            uri="http://www.example.org/ctmc"
+            class="de.hu_berlin.informatik.ctmc.model.ctmc.CtmcPackage"
+            genModel="model/ctmc.genmodel"/>
+   </extension>
+
+</plugin>
